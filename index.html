@@ -167,43 +167,61 @@
             color: var(--zen-sumi);
         }
         
-        /* ===== JSON STATUS INDICATOR ===== */
+        /* ===== JSON STATUS INDICATOR (強化版) ===== */
         .json-status {
-            position: fixed;
-            bottom: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1001;
-            padding: var(--space-sm) var(--space-md);
-            border-radius: 8px;
-            font-size: var(--font-size-xs);
-            font-weight: 500;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(45, 45, 45, 0.1);
-            transition: all 0.3s var(--ease-breathing);
-            cursor: pointer;
+            position: fixed !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            z-index: 9999 !important;
+            padding: 12px 16px !important;
+            border-radius: 8px !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(45, 45, 45, 0.1) !important;
+            transition: all 0.3s var(--ease-breathing) !important;
+            cursor: pointer !important;
+            min-width: 120px !important;
+            text-align: center !important;
+            box-shadow: var(--shadow-floating) !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: all !important;
         }
         
         .json-status.loaded {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--zen-accent);
-            border-color: rgba(212, 175, 55, 0.2);
+            background: rgba(212, 175, 55, 0.9) !important;
+            color: var(--zen-sumi) !important;
+            border-color: rgba(212, 175, 55, 0.3) !important;
         }
         
         .json-status.fallback {
-            background: rgba(138, 138, 138, 0.1);
-            color: var(--zen-silver);
-            border-color: rgba(138, 138, 138, 0.2);
+            background: rgba(138, 138, 138, 0.9) !important;
+            color: var(--zen-washi) !important;
+            border-color: rgba(138, 138, 138, 0.3) !important;
         }
         
         .json-status.error {
-            background: rgba(255, 100, 100, 0.1);
-            color: #ff6464;
-            border-color: rgba(255, 100, 100, 0.2);
+            background: rgba(255, 100, 100, 0.9) !important;
+            color: var(--zen-washi) !important;
+            border-color: rgba(255, 100, 100, 0.3) !important;
+        }
+        
+        .json-status.loading {
+            background: rgba(248, 248, 240, 0.9) !important;
+            color: var(--zen-sumi) !important;
+            border-color: rgba(45, 45, 45, 0.2) !important;
         }
         
         .json-status:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-floating);
+            transform: translateY(-2px) !important;
+            box-shadow: var(--shadow-elevated) !important;
+        }
+        
+        .json-status::before {
+            content: '📊 ' !important;
+            margin-right: 4px !important;
         }
         
         /* ===== CLAUDE GENERATOR PANEL ===== */
@@ -549,12 +567,13 @@
             font-weight: 500;
         }
         
-        /* ===== WORKS GRID ===== */
+        /* ===== WORKS GRID (強化版) ===== */
         .works-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
             gap: var(--space-xl);
             margin-bottom: calc(var(--space-xl) * 3);
+            min-height: 400px; /* 最小高さを確保 */
         }
         
         .work-card {
@@ -570,6 +589,9 @@
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-paper);
+            /* 強制表示用の緊急スタイル */
+            display: block !important;
+            visibility: visible !important;
         }
         
         .work-card::before {
@@ -589,8 +611,8 @@
         }
         
         .work-card.visible {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1 !important;
+            transform: translateY(0) !important;
         }
         
         .work-card:hover {
@@ -618,7 +640,7 @@
             z-index: 2;
         }
         
-        /* ===== WORK PREVIEW ===== */
+        /* ===== WORK PREVIEW (強化版) ===== */
         .work-preview {
             width: 100%;
             height: 240px;
@@ -629,6 +651,9 @@
             overflow: hidden;
             border: 1px solid rgba(45, 45, 45, 0.08);
             z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .work-thumbnail {
@@ -641,6 +666,20 @@
         
         .work-thumbnail:hover {
             transform: scale(1.02);
+        }
+        
+        .work-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--zen-washi), var(--zen-pearl));
+            color: var(--zen-stone);
+            font-size: var(--font-size-lg);
+            font-weight: 300;
+            text-align: center;
+            line-height: 1.4;
         }
         
         /* ===== WORK CARD CONTENT ===== */
@@ -916,10 +955,10 @@
             }
             
             .json-status {
-                bottom: var(--space-md);
-                right: var(--space-md);
-                font-size: 10px;
-                padding: var(--space-xs) var(--space-sm);
+                bottom: 16px !important;
+                right: 16px !important;
+                font-size: 11px !important;
+                padding: 8px 12px !important;
             }
         }
     </style>
@@ -940,8 +979,8 @@
         </nav>
     </div>
     
-    <!-- JSON Status Indicator -->
-    <div id="json-status" class="json-status" onclick="toggleJsonInfo()">
+    <!-- JSON Status Indicator (強化版) -->
+    <div id="json-status" class="json-status loading" onclick="toggleJsonInfo()">
         <span id="json-status-text">読み込み中...</span>
     </div>
     
@@ -1097,7 +1136,7 @@
     </div>
 
     <script>
-        // ===== ZEN ART PORTFOLIO SYSTEM (STEP 2: ENHANCED JSON MANAGEMENT) =====
+        // ===== ZEN ART PORTFOLIO SYSTEM (FIXED VERSION) =====
         
         // ===== GLOBAL VARIABLES =====
         let artworksData = [];
@@ -1105,23 +1144,11 @@
         let loadingState = 'loading'; // loading, loaded, fallback, error
         let jsonSource = 'unknown'; // json, fallback
         
-        // ===== JSON VALIDATION SCHEMA =====
-        const JSON_SCHEMA = {
-            required: ['artworks'],
-            artworks: {
-                required: ['id', 'title', 'description'],
-                optional: ['subtitle', 'media', 'prompt', 'code', 'tech', 'category', 'featured', 'created', 'tags']
-            },
-            meta: {
-                optional: ['version', 'total', 'generated', 'description', 'author', 'contact']
-            }
-        };
-        
         // ===== ENHANCED FALLBACK DATA =====
         const FALLBACK_DATA = {
             "meta": {
                 "version": "1.0-fallback",
-                "total": 3,
+                "total": 6,
                 "generated": new Date().toISOString(),
                 "description": "フォールバックサンプルデータ - artworks.jsonを作成してください",
                 "author": "Tatsya Minegishi",
@@ -1132,15 +1159,11 @@
                     "id": "zen-mandala-sample",
                     "title": "Zen Mandala",
                     "subtitle": "幾何学的調和",
-                    "description": "Three.jsとWebGLシェーダーを用いた動的曼荼羅の生成。数学的美と禅的瞑想の融合を探求。",
+                    "description": "Three.jsとWebGLシェーダーを用いた動的曼荼羅の生成。数学的美と禅的瞑想の融合を探求した実験的作品です。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Zen+Mandala",
+                            "url": "https://picsum.photos/600/400?random=1",
                             "alt": "Zen Mandala"
-                        },
-                        "animation": {
-                            "type": "mandala",
-                            "desktop_only": true
                         }
                     },
                     "prompt": {
@@ -1161,15 +1184,11 @@
                     "id": "digital-zen-garden-sample",
                     "title": "Digital Zen Garden", 
                     "subtitle": "デジタル枯山水",
-                    "description": "パーティクルシステムとノイズ関数を用いた、インタラクティブな砂庭のシミュレーション。",
+                    "description": "パーティクルシステムとノイズ関数を用いた、インタラクティブな砂庭のシミュレーション。静寂と動きの絶妙なバランス。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Digital+Zen+Garden",
+                            "url": "https://picsum.photos/600/400?random=2",
                             "alt": "Digital Zen Garden"
-                        },
-                        "animation": {
-                            "type": "zen-garden",
-                            "desktop_only": true
                         }
                     },
                     "prompt": {
@@ -1178,7 +1197,7 @@
                     },
                     "code": {
                         "language": "javascript",
-                        "content": "// Zen garden particle system\nclass ZenGarden {\n  constructor() {\n    this.particles = [];\n    this.initParticles();\n  }\n}"
+                        "content": "// Zen garden particle system\nclass ZenGarden {\n  constructor() {\n    this.particles = [];\n    this.initParticles();\n  }\n  \n  initParticles() {\n    for(let i = 0; i < 1000; i++) {\n      this.particles.push(new Particle());\n    }\n  }\n}"
                     },
                     "tech": ["Canvas 2D", "Particle System", "Perlin Noise"],
                     "category": "zen",
@@ -1190,15 +1209,11 @@
                     "id": "ink-meditation-sample",
                     "title": "Ink Meditation",
                     "subtitle": "墨絵の瞑想",
-                    "description": "墨が和紙に滲む瞬間の美的表現。書道の精神性をデジタルで再現した作品。",
+                    "description": "墨が和紙に滲む瞬間の美的表現。書道の精神性をデジタルで再現し、一筆一筆に込められた意味を探求します。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Ink+Meditation",
+                            "url": "https://picsum.photos/600/400?random=3",
                             "alt": "Ink Meditation"
-                        },
-                        "animation": {
-                            "type": "ink",
-                            "desktop_only": true
                         }
                     },
                     "prompt": {
@@ -1207,83 +1222,211 @@
                     },
                     "code": {
                         "language": "javascript",
-                        "content": "// Ink bleeding simulation\nfunction simulateInk(x, y) {\n  const flow = noise(x, y, time);\n  return flow;\n}"
+                        "content": "// Ink bleeding simulation\nfunction simulateInk(x, y) {\n  const flow = noise(x * 0.01, y * 0.01, time * 0.001);\n  const intensity = Math.sin(time * 0.002) * 0.5 + 0.5;\n  return flow * intensity;\n}"
                     },
                     "tech": ["Canvas 2D", "Fluid Dynamics", "Traditional Art"],
                     "category": "zen",
                     "featured": false,
                     "created": "2025-01-28",
                     "tags": ["ink", "calligraphy", "traditional"]
+                },
+                {
+                    "id": "sakura-particles-sample",
+                    "title": "Sakura Particles",
+                    "subtitle": "桜散りゆく",
+                    "description": "風に舞う桜の花びらをパーティクルシステムで表現。季節の移ろいと無常観を技術で描く詩的な実験です。",
+                    "media": {
+                        "thumbnail": {
+                            "url": "https://picsum.photos/600/400?random=4",
+                            "alt": "Sakura Particles"
+                        }
+                    },
+                    "prompt": {
+                        "midjourney": "falling cherry blossoms, soft pink petals floating in air, gentle spring breeze, ethereal atmosphere, --ar 16:9 --style soft",
+                        "description": "風に舞う桜の花びらの美しい瞬間"
+                    },
+                    "code": {
+                        "language": "javascript",
+                        "content": "// Falling Cherry Blossoms\nclass SakuraPetal {\n  constructor() {\n    this.x = Math.random() * canvas.width;\n    this.y = -10;\n    this.speed = Math.random() * 2 + 1;\n    this.rotation = 0;\n    this.rotationSpeed = (Math.random() - 0.5) * 0.1;\n  }\n}"
+                    },
+                    "tech": ["Canvas", "JavaScript", "Particle System"],
+                    "category": "zen",
+                    "featured": true,
+                    "created": "2025-01-28",
+                    "tags": ["sakura", "nature", "seasons"]
+                },
+                {
+                    "id": "sacred-geometry-sample",
+                    "title": "Sacred Geometry",
+                    "subtitle": "聖なる幾何学",
+                    "description": "黄金比とフィボナッチ数列に基づく神聖幾何学パターン。WebGLシェーダーで描画される複雑な幾何学的調和。",
+                    "media": {
+                        "thumbnail": {
+                            "url": "https://picsum.photos/600/400?random=5",
+                            "alt": "Sacred Geometry"
+                        }
+                    },
+                    "prompt": {
+                        "midjourney": "sacred geometry patterns, golden ratio spirals, fibonacci sequences, mathematical beauty, mystical symbols, --ar 16:9 --style geometric",
+                        "description": "神聖幾何学の複雑で美しいパターン"
+                    },
+                    "code": {
+                        "language": "glsl",
+                        "content": "// Sacred Geometry Shader\n#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nuniform vec2 u_resolution;\n\nvoid main() {\n  vec2 st = gl_FragCoord.xy/u_resolution.xy;\n  float r = length(st - 0.5);\n  float a = atan(st.y - 0.5, st.x - 0.5);\n  \n  float pattern = sin(r * 20.0 + u_time) * sin(a * 8.0);\n  vec3 color = vec3(pattern);\n  \n  gl_FragColor = vec4(color, 1.0);\n}"
+                    },
+                    "tech": ["Three.js", "WebGL", "GLSL"],
+                    "category": "technical",
+                    "featured": false,
+                    "created": "2025-01-28",
+                    "tags": ["geometry", "mathematics", "shaders"]
+                },
+                {
+                    "id": "moonlight-reflection-sample",
+                    "title": "Moonlight Reflection",
+                    "subtitle": "月光水面",
+                    "description": "静寂な湖面に映る月光の揺らめき。リアルタイム反射計算とノイズを組み合わせた幻想的な水面表現。",
+                    "media": {
+                        "thumbnail": {
+                            "url": "https://picsum.photos/600/400?random=6",
+                            "alt": "Moonlight Reflection"
+                        }
+                    },
+                    "prompt": {
+                        "midjourney": "moonlight reflecting on calm water surface, gentle ripples, serene night atmosphere, silver and blue tones, --ar 16:9 --style atmospheric",
+                        "description": "静寂な夜の湖面に映る神秘的な月光"
+                    },
+                    "code": {
+                        "language": "javascript",
+                        "content": "// Moonlight water reflection\nclass WaterSurface {\n  constructor(canvas) {\n    this.canvas = canvas;\n    this.ctx = canvas.getContext('2d');\n    this.waves = [];\n    this.initWaves();\n  }\n  \n  render() {\n    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);\n    this.drawMoonlight();\n    this.drawWaves();\n  }\n}"
+                    },
+                    "tech": ["Canvas 2D", "Mouse Interaction", "Real-time"],
+                    "category": "zen",
+                    "featured": false,
+                    "created": "2025-01-28",
+                    "tags": ["moonlight", "water", "reflection"]
                 }
             ]
         };
         
-        // ===== JSON VALIDATION FUNCTIONS =====
+        // ===== ENHANCED FUNCTIONS =====
+        
+        function safeLog(message, data = null) {
+            try {
+                if (data) {
+                    console.log(`🎨 ${message}`, data);
+                } else {
+                    console.log(`🎨 ${message}`);
+                }
+            } catch (e) {
+                // Ignore console errors
+            }
+        }
+        
+        function updateJsonStatus(status, text) {
+            try {
+                const statusEl = document.getElementById('json-status');
+                const textEl = document.getElementById('json-status-text');
+                
+                if (statusEl && textEl) {
+                    // Force visibility with important styles
+                    statusEl.className = `json-status ${status}`;
+                    statusEl.style.cssText = `
+                        position: fixed !important;
+                        bottom: 20px !important;
+                        right: 20px !important;
+                        z-index: 9999 !important;
+                        display: block !important;
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                        pointer-events: all !important;
+                    `;
+                    textEl.textContent = text;
+                    
+                    safeLog(`JSON状態更新: ${status} - ${text}`);
+                } else {
+                    safeLog('JSON状態要素が見つかりません');
+                }
+            } catch (e) {
+                safeLog('JSON状態更新エラー:', e.message);
+            }
+        }
+        
         function validateArtworkData(data) {
-            const errors = [];
-            
-            if (!data || typeof data !== 'object') {
-                return ['Invalid JSON structure'];
+            try {
+                if (!data || typeof data !== 'object') {
+                    return ['Invalid JSON structure'];
+                }
+                
+                if (!data.artworks || !Array.isArray(data.artworks)) {
+                    return ['Missing or invalid artworks array'];
+                }
+                
+                // Basic validation passed
+                return [];
+            } catch (e) {
+                return ['Validation error: ' + e.message];
             }
-            
-            if (!data.artworks || !Array.isArray(data.artworks)) {
-                errors.push('Missing or invalid artworks array');
-            } else {
-                data.artworks.forEach((artwork, index) => {
-                    JSON_SCHEMA.artworks.required.forEach(field => {
-                        if (!artwork[field]) {
-                            errors.push(`Artwork ${index + 1}: Missing required field '${field}'`);
-                        }
-                    });
-                });
-            }
-            
-            return errors;
         }
         
         function sanitizeArtworkData(data) {
-            if (!data.artworks) return data;
-            
-            data.artworks = data.artworks.map(artwork => {
-                // Ensure required fields have defaults
-                return {
-                    id: artwork.id || `artwork-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                    title: artwork.title || 'Untitled Work',
-                    subtitle: artwork.subtitle || '',
-                    description: artwork.description || 'No description available',
-                    media: artwork.media || {
-                        thumbnail: {
-                            url: `https://placehold.co/600x400/f8f8f0/2d2d2d?text=${encodeURIComponent(artwork.title || 'Untitled')}`,
-                            alt: artwork.title || 'Untitled Work'
-                        }
-                    },
-                    prompt: artwork.prompt || { midjourney: 'No prompt available', description: '' },
-                    code: artwork.code || { language: 'javascript', content: '// No code available' },
-                    tech: artwork.tech || [],
-                    category: artwork.category || 'general',
-                    featured: artwork.featured || false,
-                    created: artwork.created || new Date().toISOString().split('T')[0],
-                    tags: artwork.tags || []
-                };
-            });
-            
-            return data;
+            try {
+                if (!data.artworks) return data;
+                
+                data.artworks = data.artworks.map((artwork, index) => {
+                    const safeArtwork = {
+                        id: artwork.id || `artwork-${Date.now()}-${index}`,
+                        title: artwork.title || 'Untitled Work',
+                        subtitle: artwork.subtitle || '',
+                        description: artwork.description || 'No description available',
+                        media: artwork.media || {
+                            thumbnail: {
+                                url: `https://picsum.photos/600/400?random=${index + 10}`,
+                                alt: artwork.title || 'Untitled Work'
+                            }
+                        },
+                        prompt: artwork.prompt || { 
+                            midjourney: 'No prompt available', 
+                            description: '' 
+                        },
+                        code: artwork.code || { 
+                            language: 'javascript', 
+                            content: '// No code available' 
+                        },
+                        tech: artwork.tech || [],
+                        category: artwork.category || 'general',
+                        featured: artwork.featured || false,
+                        created: artwork.created || new Date().toISOString().split('T')[0],
+                        tags: artwork.tags || []
+                    };
+                    
+                    // Ensure thumbnail URL is valid
+                    if (!safeArtwork.media.thumbnail.url || safeArtwork.media.thumbnail.url.includes('placehold.co')) {
+                        safeArtwork.media.thumbnail.url = `https://picsum.photos/600/400?random=${index + 10}`;
+                    }
+                    
+                    return safeArtwork;
+                });
+                
+                return data;
+            } catch (e) {
+                safeLog('データサニタイズエラー:', e.message);
+                return data;
+            }
         }
         
-        // ===== ENHANCED JSON LOADING =====
         async function loadArtworksData() {
-            console.log('🎨 ZEN Portfolio Step 2: 高度なJSON読み込み開始');
+            safeLog('ZEN Portfolio: 完全修正版データ読み込み開始');
             updateJsonStatus('loading', 'データ読み込み中...');
             
             try {
-                // Multiple file attempt strategy
+                // Try to load artworks.json
                 const possibleFiles = ['artworks.json', 'data/artworks.json', './artworks.json'];
                 let data = null;
                 let loadedFrom = null;
                 
                 for (const file of possibleFiles) {
                     try {
-                        console.log(`📂 ファイル試行: ${file}`);
+                        safeLog(`ファイル試行: ${file}`);
                         const response = await fetch(file);
                         
                         if (response.ok) {
@@ -1293,40 +1436,34 @@
                             break;
                         }
                     } catch (err) {
-                        console.log(`❌ ${file} 読み込み失敗:`, err.message);
+                        safeLog(`${file} 読み込み失敗:`, err.message);
                         continue;
                     }
                 }
                 
                 if (!data) {
-                    throw new Error('No artworks.json file found in any location');
+                    throw new Error('No artworks.json file found');
                 }
                 
-                // Validate JSON data
+                // Validate and sanitize data
                 const validationErrors = validateArtworkData(data);
                 if (validationErrors.length > 0) {
-                    console.warn('⚠️ JSON検証エラー:', validationErrors);
-                    showValidationWarnings(validationErrors);
+                    safeLog('JSON検証警告:', validationErrors);
                 }
                 
-                // Sanitize and prepare data
                 data = sanitizeArtworkData(data);
                 artworksData = data.artworks;
                 metaData = data.meta || {};
                 loadingState = 'loaded';
                 jsonSource = 'json';
                 
-                console.log(`✅ JSON読み込み成功: ${artworksData.length}件の作品`);
-                console.log(`📄 読み込み元: ${loadedFrom}`);
-                console.log('📊 メタデータ:', metaData);
+                safeLog(`JSON読み込み成功: ${artworksData.length}件の作品`);
+                safeLog(`読み込み元: ${loadedFrom}`);
                 
                 updateJsonStatus('loaded', `${artworksData.length}作品 (JSON)`);
-                displayMetaInfo();
-                generateGallery();
                 
             } catch (error) {
-                console.warn('⚠️ JSON読み込み失敗:', error.message);
-                console.log('🔄 フォールバックデータを使用');
+                safeLog('JSON読み込み失敗、フォールバック使用:', error.message);
                 
                 // Use fallback data
                 artworksData = FALLBACK_DATA.artworks;
@@ -1335,81 +1472,295 @@
                 jsonSource = 'fallback';
                 
                 updateJsonStatus('fallback', `${artworksData.length}作品 (サンプル)`);
-                showFallbackNotification();
+            }
+            
+            // Always proceed to display
+            try {
                 displayMetaInfo();
                 generateGallery();
+            } catch (displayError) {
+                safeLog('表示エラー:', displayError.message);
+                showErrorState();
             }
         }
         
-        // ===== STATUS AND NOTIFICATION FUNCTIONS =====
-        function updateJsonStatus(status, text) {
-            const statusEl = document.getElementById('json-status');
-            const textEl = document.getElementById('json-status-text');
-            
-            if (statusEl && textEl) {
-                statusEl.className = `json-status ${status}`;
-                textEl.textContent = text;
+        function displayMetaInfo() {
+            try {
+                const metaPanel = document.getElementById('meta-info');
+                if (!metaPanel || !metaData) return;
+                
+                if (metaData.version || metaData.description || metaData.author) {
+                    metaPanel.style.display = 'block';
+                    
+                    const elements = {
+                        'meta-total': metaData.total || artworksData.length,
+                        'meta-version': metaData.version || '1.0',
+                        'meta-generated': metaData.generated ? 
+                            new Date(metaData.generated).toLocaleDateString('ja-JP') : '今日',
+                        'meta-description': metaData.description || 'ZEN Art Portfolio 作品集',
+                        'meta-author': metaData.author ? `by ${metaData.author}` : ''
+                    };
+                    
+                    Object.entries(elements).forEach(([id, value]) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = value;
+                    });
+                }
+            } catch (e) {
+                safeLog('メタ情報表示エラー:', e.message);
             }
         }
         
-        function showValidationWarnings(errors) {
-            const notification = createNotification('warning', 'JSON検証警告', errors.join('<br>'), 8000);
-            document.body.appendChild(notification);
+        function generateGallery() {
+            try {
+                const gallery = document.getElementById('gallery');
+                if (!gallery) {
+                    safeLog('ギャラリー要素が見つかりません');
+                    return;
+                }
+                
+                safeLog('ギャラリー生成開始');
+                gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>作品を生成中...</span></div>';
+                
+                if (!artworksData || artworksData.length === 0) {
+                    showErrorState();
+                    return;
+                }
+                
+                // Clear and create cards
+                gallery.innerHTML = '';
+                
+                // Sort artworks: featured first
+                const sortedArtworks = [...artworksData].sort((a, b) => {
+                    if (a.featured && !b.featured) return -1;
+                    if (!a.featured && b.featured) return 1;
+                    return new Date(b.created || 0) - new Date(a.created || 0);
+                });
+                
+                safeLog(`${sortedArtworks.length}件の作品をカード生成中`);
+                
+                // Create cards with error handling
+                sortedArtworks.forEach((work, index) => {
+                    try {
+                        const card = createSafeWorkCard(work, index);
+                        gallery.appendChild(card);
+                        safeLog(`カード生成完了: ${work.title}`);
+                    } catch (cardError) {
+                        safeLog(`カード生成エラー: ${work.title}`, cardError.message);
+                        // Continue with next card
+                    }
+                });
+                
+                // Force show cards with delay
+                setTimeout(() => {
+                    try {
+                        const cards = gallery.querySelectorAll('.work-card');
+                        cards.forEach((card, index) => {
+                            setTimeout(() => {
+                                card.classList.add('visible');
+                            }, index * 100);
+                        });
+                        safeLog(`${cards.length}件のカードを表示中`);
+                    } catch (showError) {
+                        safeLog('カード表示エラー:', showError.message);
+                    }
+                }, 100);
+                
+                // Setup scroll animations
+                setTimeout(() => {
+                    setupScrollAnimations();
+                }, 500);
+                
+                safeLog('ギャラリー生成完了');
+                
+            } catch (error) {
+                safeLog('ギャラリー生成エラー:', error.message);
+                showErrorState();
+            }
         }
         
-        function showFallbackNotification() {
-            const notification = createNotification(
-                'info', 
-                'サンプルデータで動作中',
-                'artworks.json が見つかりません。<br>Claude生成ボタンでデータを作成できます。',
-                6000
-            );
-            document.body.appendChild(notification);
+        function createSafeWorkCard(work, index) {
+            try {
+                const card = document.createElement('div');
+                card.className = `work-card ${work.featured ? 'featured' : ''}`;
+                card.style.transitionDelay = `${index * 0.1}s`;
+                
+                // Safe thumbnail URL
+                const thumbnailUrl = (work.media && work.media.thumbnail && work.media.thumbnail.url) 
+                    ? work.media.thumbnail.url 
+                    : `https://picsum.photos/600/400?random=${index + 10}`;
+                
+                const thumbnailAlt = (work.media && work.media.thumbnail && work.media.thumbnail.alt) 
+                    ? work.media.thumbnail.alt 
+                    : work.title;
+                
+                card.innerHTML = `
+                    ${work.featured ? '<div class="featured-badge">注目</div>' : ''}
+                    <div class="work-preview">
+                        <img 
+                            src="${thumbnailUrl}" 
+                            alt="${thumbnailAlt}"
+                            class="work-thumbnail"
+                            loading="lazy"
+                            onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\\"work-placeholder\\">${work.title}</div>'"
+                        >
+                    </div>
+                    <div class="work-content">
+                        <h3 class="work-title">${work.title}</h3>
+                        ${work.subtitle ? `<p class="work-subtitle">${work.subtitle}</p>` : ''}
+                        <p class="work-description">${work.description}</p>
+                        <div class="work-actions">
+                            <button class="action-btn" onclick="copyPrompt('${work.id}')">
+                                Prompt Copy
+                            </button>
+                            <button class="action-btn" onclick="copyCode('${work.id}')">
+                                Code Copy
+                            </button>
+                        </div>
+                        <div class="work-tech">
+                            ${(work.tech || []).map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                // Safe click handler
+                card.addEventListener('click', (e) => {
+                    try {
+                        if (!e.target.classList.contains('action-btn')) {
+                            openWorkModal(work);
+                        }
+                    } catch (clickError) {
+                        safeLog('カードクリックエラー:', clickError.message);
+                    }
+                });
+                
+                return card;
+                
+            } catch (error) {
+                safeLog('カード作成エラー:', error.message);
+                // Return a simple error card
+                const errorCard = document.createElement('div');
+                errorCard.className = 'work-card';
+                errorCard.innerHTML = `
+                    <div class="work-preview">
+                        <div class="work-placeholder">Error Loading: ${work.title || 'Unknown'}</div>
+                    </div>
+                    <div class="work-content">
+                        <h3 class="work-title">${work.title || 'Error'}</h3>
+                        <p class="work-description">カードの読み込みでエラーが発生しました。</p>
+                    </div>
+                `;
+                return errorCard;
+            }
         }
         
-        function createNotification(type, title, message, duration = 4000) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                background: ${type === 'warning' ? 'rgba(255, 193, 7, 0.95)' : 'rgba(45, 45, 45, 0.95)'};
-                color: ${type === 'warning' ? '#000' : '#f8f8f0'};
-                padding: 16px 20px;
-                border-radius: 12px;
-                z-index: 10001;
-                max-width: 350px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-                border-left: 4px solid ${type === 'warning' ? '#ffc107' : '#d4af37'};
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            `;
-            
-            notification.innerHTML = `
-                <div style="font-weight: 500; margin-bottom: 6px;">${title}</div>
-                <div style="font-size: 13px; opacity: 0.9; line-height: 1.4;">${message}</div>
-                <button onclick="this.parentNode.remove()" style="
-                    position: absolute;
-                    top: 8px;
-                    right: 8px;
-                    background: none;
-                    border: none;
-                    color: inherit;
-                    cursor: pointer;
-                    font-size: 18px;
-                    padding: 4px;
-                    opacity: 0.7;
-                ">×</button>
-            `;
-            
-            setTimeout(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                if (notification.parentNode) {
+        function showErrorState() {
+            try {
+                const gallery = document.getElementById('gallery');
+                if (gallery) {
+                    gallery.innerHTML = `
+                        <div class="error-state">
+                            <div class="error-icon">⚠️</div>
+                            <div class="error-message">作品の読み込みでエラーが発生しました</div>
+                            <div class="error-details">
+                                データの形式に問題があるか、ネットワークエラーが発生している可能性があります。
+                            </div>
+                            <button class="retry-button" onclick="retryLoadData()">再試行</button>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                safeLog('エラー状態表示エラー:', e.message);
+            }
+        }
+        
+        // ===== COPY FUNCTIONS =====
+        function copyPrompt(workId) {
+            try {
+                const work = artworksData.find(w => w.id === workId);
+                if (work && work.prompt) {
+                    const promptText = work.prompt.midjourney || work.prompt.description || 'プロンプトが見つかりません';
+                    copyTextToClipboard(promptText, `"${work.title}" のプロンプトをコピーしました`);
+                }
+            } catch (e) {
+                safeLog('プロンプトコピーエラー:', e.message);
+            }
+        }
+        
+        function copyCode(workId) {
+            try {
+                const work = artworksData.find(w => w.id === workId);
+                if (work && work.code) {
+                    const codeText = work.code.content || 'コードが見つかりません';
+                    copyTextToClipboard(codeText, `"${work.title}" のコードをコピーしました`);
+                }
+            } catch (e) {
+                safeLog('コードコピーエラー:', e.message);
+            }
+        }
+        
+        function copyTextToClipboard(text, successMessage = 'コピーしました ✅') {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showSimpleNotification(successMessage);
+                    }).catch(err => {
+                        fallbackCopyTextToClipboard(text, successMessage);
+                    });
+                } else {
+                    fallbackCopyTextToClipboard(text, successMessage);
+                }
+            } catch (e) {
+                safeLog('クリップボードコピーエラー:', e.message);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text, successMessage) {
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                document.execCommand('copy');
+                showSimpleNotification(successMessage);
+                document.body.removeChild(textArea);
+            } catch (err) {
+                safeLog('フォールバックコピーエラー:', err.message);
+                showSimpleNotification('コピーに失敗しました ❌');
+            }
+        }
+        
+        function showSimpleNotification(message) {
+            try {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: rgba(45, 45, 45, 0.95);
+                    color: #f8f8f0;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 10001;
+                    font-size: 14px;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                    opacity: 0;
+                    transform: translateX(100%);
+                    transition: all 0.4s ease;
+                `;
+                
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.opacity = '1';
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                setTimeout(() => {
                     notification.style.opacity = '0';
                     notification.style.transform = 'translateX(100%)';
                     setTimeout(() => {
@@ -1417,536 +1768,387 @@
                             notification.parentNode.removeChild(notification);
                         }
                     }, 400);
-                }
-            }, duration);
-            
-            return notification;
-        }
-        
-        // ===== META INFO DISPLAY =====
-        function displayMetaInfo() {
-            const metaPanel = document.getElementById('meta-info');
-            if (!metaPanel || !metaData) return;
-            
-            // Show meta panel if we have meaningful meta data
-            if (metaData.version || metaData.description || metaData.author) {
-                metaPanel.style.display = 'block';
-                
-                // Update meta information
-                document.getElementById('meta-total').textContent = metaData.total || artworksData.length;
-                document.getElementById('meta-version').textContent = metaData.version || '1.0';
-                
-                if (metaData.generated) {
-                    const date = new Date(metaData.generated);
-                    document.getElementById('meta-generated').textContent = date.toLocaleDateString('ja-JP');
-                } else {
-                    document.getElementById('meta-generated').textContent = '今日';
-                }
-                
-                document.getElementById('meta-description').textContent = metaData.description || 'ZEN Art Portfolio 作品集';
-                document.getElementById('meta-author').textContent = metaData.author ? `by ${metaData.author}` : '';
+                }, 2000);
+            } catch (e) {
+                safeLog('通知表示エラー:', e.message);
             }
         }
         
         // ===== CLAUDE GENERATOR FUNCTIONS =====
         function openClaudeGenerator() {
-            const panel = document.getElementById('claudePanel');
-            panel.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            try {
+                const panel = document.getElementById('claudePanel');
+                panel.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } catch (e) {
+                safeLog('Claude生成パネルオープンエラー:', e.message);
+            }
         }
         
         function closeClaudeGenerator() {
-            const panel = document.getElementById('claudePanel');
-            panel.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            try {
+                const panel = document.getElementById('claudePanel');
+                panel.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            } catch (e) {
+                safeLog('Claude生成パネルクローズエラー:', e.message);
+            }
         }
         
         function copyClaudePrompt() {
-            const promptText = document.getElementById('claudePrompt').value;
-            copyText(promptText, 'Claude生成プロンプトをコピーしました！\n\n次のステップ:\n1. 新しいClaude会話でプロンプトを送信\n2. 生成されたJSONをコピー\n3. artworks.jsonファイルにペースト\n4. ページをリロード');
-        }
-        
-        // ===== JSON STATUS TOGGLE =====
-        function toggleJsonInfo() {
-            // より詳細な情報を表示する改良版
-            const details = [
-                `📂 データソース: ${jsonSource === 'json' ? 'artworks.json ✅' : 'フォールバックデータ ⚠️'}`,
-                `🎨 作品数: ${artworksData.length}件`,
-                `🔄 読み込み状態: ${loadingState}`,
-                `📋 バージョン: ${metaData.version || 'N/A'}`,
-                `📅 最終更新: ${metaData.generated ? new Date(metaData.generated).toLocaleString('ja-JP') : 'N/A'}`,
-                `👤 作成者: ${metaData.author || 'N/A'}`,
-                `📧 連絡先: ${metaData.contact || 'N/A'}`
-            ];
-            
-            showJsonStatusModal(details);
-        }
-        
-        // ===== JSON STATUS MODAL =====
-        function showJsonStatusModal(details) {
-            // 既存のモーダルがあれば削除
-            const existingModal = document.getElementById('jsonStatusModal');
-            if (existingModal) {
-                existingModal.remove();
+            try {
+                const promptText = document.getElementById('claudePrompt').value;
+                copyTextToClipboard(promptText, 'Claude生成プロンプトをコピーしました！');
+            } catch (e) {
+                safeLog('Claudeプロンプトコピーエラー:', e.message);
             }
-            
-            // ステータスモーダルを作成
-            const modal = document.createElement('div');
-            modal.id = 'jsonStatusModal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(248, 248, 240, 0.98);
-                backdrop-filter: blur(20px);
-                border-radius: 16px;
-                padding: 2rem;
-                max-width: 90vw;
-                width: 500px;
-                box-shadow: 0 16px 64px rgba(45, 45, 45, 0.16);
-                border: 1px solid rgba(45, 45, 45, 0.1);
-                z-index: 10003;
-                opacity: 0;
-                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-                font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            `;
-            
-            modal.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 style="margin: 0; color: #2d2d2d; font-size: 1.25rem; font-weight: 500;">
-                        📊 システム状態情報
-                    </h3>
-                    <button onclick="closeJsonStatusModal()" style="
-                        background: none;
-                        border: none;
-                        font-size: 1.5rem;
-                        cursor: pointer;
-                        color: #8a8a8a;
-                        padding: 0.5rem;
-                        border-radius: 50%;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='rgba(45,45,45,0.1)'" onmouseout="this.style.background='none'">×</button>
-                </div>
-                
-                <div style="space-y: 1rem;">
-                    ${details.map(detail => `
-                        <div style="
-                            padding: 0.75rem 1rem;
-                            background: rgba(255, 255, 255, 0.7);
-                            border-radius: 8px;
-                            border-left: 3px solid #d4af37;
-                            margin-bottom: 0.5rem;
-                            font-size: 0.9rem;
-                            color: #2d2d2d;
-                        ">${detail}</div>
-                    `).join('')}
-                </div>
-                
-                <div style="margin-top: 1.5rem; text-align: center;">
-                    <button onclick="retryLoadData(); closeJsonStatusModal();" style="
-                        background: #2d2d2d;
-                        color: #f8f8f0;
-                        border: none;
-                        padding: 0.75rem 1.5rem;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-size: 0.9rem;
-                        font-weight: 500;
-                        margin-right: 0.5rem;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='#d4af37'; this.style.color='#2d2d2d'" onmouseout="this.style.background='#2d2d2d'; this.style.color='#f8f8f0'">
-                        🔄 データ再読み込み
-                    </button>
-                    <button onclick="openClaudeGenerator(); closeJsonStatusModal();" style="
-                        background: transparent;
-                        color: #2d2d2d;
-                        border: 1px solid rgba(45, 45, 45, 0.2);
-                        padding: 0.75rem 1.5rem;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        font-size: 0.9rem;
-                        font-weight: 500;
-                        transition: all 0.3s ease;
-                    " onmouseover="this.style.background='rgba(45,45,45,0.05)'" onmouseout="this.style.background='transparent'">
-                        🤖 Claude生成
-                    </button>
-                </div>
-            `;
-            
-            // オーバーレイを作成
-            const overlay = document.createElement('div');
-            overlay.id = 'jsonStatusOverlay';
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(45, 45, 45, 0.5);
-                backdrop-filter: blur(5px);
-                z-index: 10002;
-                opacity: 0;
-                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            `;
-            
-            overlay.addEventListener('click', closeJsonStatusModal);
-            
-            document.body.appendChild(overlay);
-            document.body.appendChild(modal);
-            
-            // アニメーション開始
-            setTimeout(() => {
-                overlay.style.opacity = '1';
-                modal.style.opacity = '1';
-            }, 50);
         }
         
-        // ===== CLOSE JSON STATUS MODAL =====
-        function closeJsonStatusModal() {
-            const modal = document.getElementById('jsonStatusModal');
-            const overlay = document.getElementById('jsonStatusOverlay');
-            
-            if (modal && overlay) {
-                modal.style.opacity = '0';
-                overlay.style.opacity = '0';
+        // ===== JSON STATUS FUNCTIONS =====
+        function toggleJsonInfo() {
+            try {
+                safeLog('JSON状態クリック検知');
+                
+                const details = [
+                    `📂 データソース: ${jsonSource === 'json' ? 'artworks.json ✅' : 'フォールバックデータ ⚠️'}`,
+                    `🎨 作品数: ${artworksData.length}件`,
+                    `🔄 読み込み状態: ${loadingState}`,
+                    `📋 バージョン: ${metaData.version || 'N/A'}`,
+                    `👤 作成者: ${metaData.author || 'N/A'}`
+                ];
+                
+                showSimpleModal('📊 システム状態情報', details.join('<br>'));
+            } catch (e) {
+                safeLog('JSON状態表示エラー:', e.message);
+            }
+        }
+        
+        function showSimpleModal(title, content) {
+            try {
+                // Remove existing modal
+                const existingModal = document.getElementById('simpleModal');
+                if (existingModal) existingModal.remove();
+                
+                const modal = document.createElement('div');
+                modal.id = 'simpleModal';
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(248, 248, 240, 0.98);
+                    backdrop-filter: blur(20px);
+                    border-radius: 16px;
+                    padding: 2rem;
+                    max-width: 90vw;
+                    width: 500px;
+                    box-shadow: 0 16px 64px rgba(45, 45, 45, 0.16);
+                    z-index: 10003;
+                    opacity: 0;
+                    transition: all 0.4s ease;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0; color: #2d2d2d; font-size: 1.25rem;">${title}</h3>
+                        <button onclick="closeSimpleModal()" style="
+                            background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #8a8a8a; padding: 0.5rem;
+                        ">×</button>
+                    </div>
+                    <div style="color: #2d2d2d; line-height: 1.6;">${content}</div>
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <button onclick="retryLoadData(); closeSimpleModal();" style="
+                            background: #2d2d2d; color: #f8f8f0; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; margin-right: 0.5rem;
+                        ">🔄 再読み込み</button>
+                    </div>
+                `;
+                
+                // Create overlay
+                const overlay = document.createElement('div');
+                overlay.id = 'simpleOverlay';
+                overlay.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(45, 45, 45, 0.5); z-index: 10002; opacity: 0; transition: all 0.4s ease;
+                `;
+                overlay.onclick = () => closeSimpleModal();
+                
+                document.body.appendChild(overlay);
+                document.body.appendChild(modal);
                 
                 setTimeout(() => {
-                    if (modal.parentNode) modal.parentNode.removeChild(modal);
-                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-                }, 400);
+                    overlay.style.opacity = '1';
+                    modal.style.opacity = '1';
+                }, 50);
+                
+            } catch (e) {
+                safeLog('モーダル表示エラー:', e.message);
             }
         }
         
-        // ===== ENHANCED GALLERY GENERATION =====
-        function generateGallery() {
-            const gallery = document.getElementById('gallery');
-            if (!gallery || !artworksData.length) return;
-            
-            console.log('🎨 高度なギャラリー生成開始');
-            showLoadingState();
-            
-            // Clear gallery
-            gallery.innerHTML = '';
-            
-            // Sort artworks: featured first, then by creation date
-            const sortedArtworks = [...artworksData].sort((a, b) => {
-                if (a.featured && !b.featured) return -1;
-                if (!a.featured && b.featured) return 1;
-                return new Date(b.created || 0) - new Date(a.created || 0);
-            });
-            
-            sortedArtworks.forEach((work, index) => {
-                const card = createEnhancedWorkCard(work, index);
-                gallery.appendChild(card);
-            });
-            
-            // Setup scroll animations with enhanced timing
-            setTimeout(() => {
-                setupScrollAnimations();
-            }, 100);
-            
-            console.log(`✅ 高度なギャラリー生成完了: ${sortedArtworks.length}件`);
-        }
-        
-        // ===== ENHANCED WORK CARD CREATION =====
-        function createEnhancedWorkCard(work, index) {
-            const card = document.createElement('div');
-            card.className = `work-card ${work.featured ? 'featured' : ''}`;
-            card.style.transitionDelay = `${index * 0.1}s`;
-            
-            // Enhanced thumbnail handling
-            const thumbnailUrl = work.media?.thumbnail?.url || 
-                                `https://placehold.co/600x400/f8f8f0/2d2d2d?text=${encodeURIComponent(work.title)}`;
-            const thumbnailAlt = work.media?.thumbnail?.alt || work.title;
-            
-            card.innerHTML = `
-                ${work.featured ? '<div class="featured-badge">注目</div>' : ''}
-                <div class="work-preview">
-                    <img 
-                        src="${thumbnailUrl}" 
-                        alt="${thumbnailAlt}"
-                        class="work-thumbnail"
-                        loading="lazy"
-                        onerror="this.src='https://placehold.co/600x400/f8f8f0/2d2d2d?text=Image+Error'"
-                    >
-                </div>
-                <div class="work-content">
-                    <h3 class="work-title">${work.title}</h3>
-                    ${work.subtitle ? `<p class="work-subtitle">${work.subtitle}</p>` : ''}
-                    <p class="work-description">${work.description}</p>
-                    <div class="work-actions">
-                        <button class="action-btn" onclick="copyPrompt('${work.id}')">
-                            Prompt Copy
-                        </button>
-                        <button class="action-btn" onclick="copyCode('${work.id}')">
-                            Code Copy
-                        </button>
-                    </div>
-                    <div class="work-tech">
-                        ${(work.tech || []).map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
-                    </div>
-                </div>
-            `;
-            
-            // Enhanced click handler
-            card.addEventListener('click', (e) => {
-                if (!e.target.classList.contains('action-btn')) {
-                    openWorkModal(work);
-                }
-            });
-            
-            return card;
-        }
-        
-        // ===== ENHANCED COPY FUNCTIONS =====
-        function copyPrompt(workId) {
-            const work = artworksData.find(w => w.id === workId);
-            if (work && work.prompt) {
-                const promptText = work.prompt.midjourney || work.prompt.description || 'プロンプトが見つかりません';
-                copyText(promptText, `"${work.title}" のプロンプトをコピーしました`);
-            }
-        }
-        
-        function copyCode(workId) {
-            const work = artworksData.find(w => w.id === workId);
-            if (work && work.code) {
-                const codeText = work.code.content || 'コードが見つかりません';
-                copyText(codeText, `"${work.title}" のコードをコピーしました`);
-            }
-        }
-        
-        function copyText(text, successMessage = 'コピーしました ✅') {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showNotification(successMessage);
-                }).catch(err => {
-                    console.error('Failed to copy: ', err);
-                    fallbackCopyTextToClipboard(text, successMessage);
-                });
-            } else {
-                fallbackCopyTextToClipboard(text, successMessage);
-            }
-        }
-        
-        function fallbackCopyTextToClipboard(text, successMessage) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
+        function closeSimpleModal() {
             try {
-                document.execCommand('copy');
-                showNotification(successMessage);
-            } catch (err) {
-                console.error('Fallback: Unable to copy', err);
-                showNotification('コピーに失敗しました ❌');
+                const modal = document.getElementById('simpleModal');
+                const overlay = document.getElementById('simpleOverlay');
+                
+                if (modal) modal.style.opacity = '0';
+                if (overlay) overlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
+                    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                }, 400);
+            } catch (e) {
+                safeLog('モーダルクローズエラー:', e.message);
             }
-            
-            document.body.removeChild(textArea);
-        }
-        
-        function showNotification(message) {
-            const notification = createNotification('success', 'コピー完了', message, 2000);
-            document.body.appendChild(notification);
-        }
-        
-        // ===== LOADING STATE =====
-        function showLoadingState() {
-            const gallery = document.getElementById('gallery');
-            if (!gallery) return;
-            
-            gallery.innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <span>高度なギャラリーを生成中...</span>
-                </div>
-            `;
         }
         
         // ===== RETRY FUNCTION =====
         function retryLoadData() {
-            showLoadingState();
-            updateJsonStatus('loading', '再試行中...');
-            setTimeout(() => {
-                loadArtworksData();
-            }, 500);
+            try {
+                const gallery = document.getElementById('gallery');
+                if (gallery) {
+                    gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>再試行中...</span></div>';
+                }
+                updateJsonStatus('loading', '再試行中...');
+                setTimeout(() => {
+                    loadArtworksData();
+                }, 500);
+            } catch (e) {
+                safeLog('データ再試行エラー:', e.message);
+            }
         }
         
-        // ===== MODAL FUNCTIONS (BASIC) =====
+        // ===== MODAL FUNCTIONS =====
         let currentModal = null;
         
         function openWorkModal(work) {
-            const modal = document.getElementById('workModal');
-            const title = document.getElementById('modalTitle');
-            
-            title.textContent = work.title;
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            currentModal = work;
-            console.log('🎭 モーダル表示:', work.title);
+            try {
+                const modal = document.getElementById('workModal');
+                const title = document.getElementById('modalTitle');
+                
+                if (modal && title) {
+                    title.textContent = work.title;
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    currentModal = work;
+                    safeLog('モーダル表示:', work.title);
+                }
+            } catch (e) {
+                safeLog('ワークモーダルオープンエラー:', e.message);
+            }
         }
         
         function closeWorkModal() {
-            const modal = document.getElementById('workModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            currentModal = null;
+            try {
+                const modal = document.getElementById('workModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                    currentModal = null;
+                }
+            } catch (e) {
+                safeLog('ワークモーダルクローズエラー:', e.message);
+            }
         }
         
-        // ===== THREE.JS BACKGROUND (ENHANCED) =====
+        // ===== THREE.JS BACKGROUND (SAFE VERSION) =====
         let scene, camera, renderer, particles;
         let animationId;
         
         function initThreeJS() {
-            const canvas = document.getElementById('zen-canvas');
-            if (!canvas) return;
-            
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            createZenParticles();
-            camera.position.z = 10;
-            animate();
+            try {
+                const canvas = document.getElementById('zen-canvas');
+                if (!canvas || !window.THREE) {
+                    safeLog('Three.js または Canvas要素が見つかりません');
+                    return;
+                }
+                
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                
+                createZenParticles();
+                camera.position.z = 10;
+                animate();
+                
+                safeLog('Three.js初期化完了');
+            } catch (e) {
+                safeLog('Three.js初期化エラー:', e.message);
+            }
         }
         
         function createZenParticles() {
-            const geometry = new THREE.BufferGeometry();
-            const particleCount = 120;
-            const positions = new Float32Array(particleCount * 3);
-            const velocities = new Float32Array(particleCount * 3);
-            
-            for (let i = 0; i < particleCount * 3; i += 3) {
-                positions[i] = (Math.random() - 0.5) * 20;
-                positions[i + 1] = (Math.random() - 0.5) * 20;
-                positions[i + 2] = (Math.random() - 0.5) * 20;
+            try {
+                const geometry = new THREE.BufferGeometry();
+                const particleCount = 80; // Reduced for performance
+                const positions = new Float32Array(particleCount * 3);
+                const velocities = new Float32Array(particleCount * 3);
                 
-                velocities[i] = (Math.random() - 0.5) * 0.01;
-                velocities[i + 1] = (Math.random() - 0.5) * 0.01;
-                velocities[i + 2] = (Math.random() - 0.5) * 0.01;
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    positions[i] = (Math.random() - 0.5) * 20;
+                    positions[i + 1] = (Math.random() - 0.5) * 20;
+                    positions[i + 2] = (Math.random() - 0.5) * 20;
+                    
+                    velocities[i] = (Math.random() - 0.5) * 0.005;
+                    velocities[i + 1] = (Math.random() - 0.5) * 0.005;
+                    velocities[i + 2] = (Math.random() - 0.5) * 0.005;
+                }
+                
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
+                
+                const material = new THREE.PointsMaterial({
+                    color: 0xd4af37,
+                    size: 0.01,
+                    transparent: true,
+                    opacity: 0.4,
+                    blending: THREE.AdditiveBlending
+                });
+                
+                particles = new THREE.Points(geometry, material);
+                scene.add(particles);
+            } catch (e) {
+                safeLog('パーティクル作成エラー:', e.message);
             }
-            
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
-            
-            const material = new THREE.PointsMaterial({
-                color: 0xd4af37,
-                size: 0.02,
-                transparent: true,
-                opacity: 0.6,
-                blending: THREE.AdditiveBlending
-            });
-            
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
         }
         
         function animate() {
-            animationId = requestAnimationFrame(animate);
-            
-            if (particles) {
-                const positions = particles.geometry.attributes.position.array;
-                const velocities = particles.geometry.attributes.velocity.array;
+            try {
+                animationId = requestAnimationFrame(animate);
                 
-                for (let i = 0; i < positions.length; i += 3) {
-                    positions[i] += velocities[i];
-                    positions[i + 1] += velocities[i + 1];
-                    positions[i + 2] += velocities[i + 2];
+                if (particles) {
+                    const positions = particles.geometry.attributes.position.array;
+                    const velocities = particles.geometry.attributes.velocity.array;
                     
-                    if (Math.abs(positions[i]) > 10) velocities[i] *= -0.9;
-                    if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -0.9;
-                    if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -0.9;
+                    for (let i = 0; i < positions.length; i += 3) {
+                        positions[i] += velocities[i];
+                        positions[i + 1] += velocities[i + 1];
+                        positions[i + 2] += velocities[i + 2];
+                        
+                        if (Math.abs(positions[i]) > 10) velocities[i] *= -0.8;
+                        if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -0.8;
+                        if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -0.8;
+                    }
+                    
+                    particles.geometry.attributes.position.needsUpdate = true;
+                    particles.rotation.y += 0.0005;
                 }
                 
-                particles.geometry.attributes.position.needsUpdate = true;
-                particles.rotation.y += 0.001;
+                if (renderer && scene && camera) {
+                    renderer.render(scene, camera);
+                }
+            } catch (e) {
+                safeLog('アニメーションエラー:', e.message);
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
             }
-            
-            renderer.render(scene, camera);
         }
         
         // ===== SCROLL ANIMATIONS =====
         function setupScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.2,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
+            try {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+                
+                document.querySelectorAll('.work-card, .section-title, .philosophy-text').forEach(el => {
+                    observer.observe(el);
                 });
-            }, observerOptions);
-            
-            document.querySelectorAll('.work-card, .section-title, .philosophy-text').forEach(el => {
-                observer.observe(el);
-            });
+                
+                safeLog('スクロールアニメーション設定完了');
+            } catch (e) {
+                safeLog('スクロールアニメーション設定エラー:', e.message);
+            }
         }
         
         // ===== NAVIGATION =====
         function setupNavigation() {
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = item.getAttribute('href');
-                    const target = document.querySelector(targetId);
-                    if (target) {
-                        const offsetTop = target.offsetTop - 80;
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
-                        });
-                    }
+            try {
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        try {
+                            e.preventDefault();
+                            const targetId = item.getAttribute('href');
+                            const target = document.querySelector(targetId);
+                            if (target) {
+                                const offsetTop = target.offsetTop - 80;
+                                window.scrollTo({
+                                    top: offsetTop,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        } catch (navError) {
+                            safeLog('ナビゲーションクリックエラー:', navError.message);
+                        }
+                    });
                 });
-            });
+                
+                safeLog('ナビゲーション設定完了');
+            } catch (e) {
+                safeLog('ナビゲーション設定エラー:', e.message);
+            }
         }
         
         // ===== EVENT LISTENERS =====
         function setupEventListeners() {
-            const closeBtn = document.getElementById('closeModal');
-            const modal = document.getElementById('workModal');
-            
-            closeBtn.addEventListener('click', closeWorkModal);
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeWorkModal();
+            try {
+                const closeBtn = document.getElementById('closeModal');
+                const modal = document.getElementById('workModal');
+                
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', closeWorkModal);
                 }
-            });
-            
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    if (currentModal) {
-                        closeWorkModal();
-                    } else if (document.getElementById('claudePanel').classList.contains('active')) {
-                        closeClaudeGenerator();
-                    } else if (document.getElementById('jsonStatusModal')) {
-                        closeJsonStatusModal();
+                
+                if (modal) {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            closeWorkModal();
+                        }
+                    });
+                }
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        if (currentModal) {
+                            closeWorkModal();
+                        } else if (document.getElementById('claudePanel').classList.contains('active')) {
+                            closeClaudeGenerator();
+                        } else if (document.getElementById('simpleModal')) {
+                            closeSimpleModal();
+                        }
                     }
-                }
-            });
-            
-            window.addEventListener('resize', () => {
-                if (camera && renderer) {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                }
-            });
+                });
+                
+                window.addEventListener('resize', () => {
+                    if (camera && renderer) {
+                        camera.aspect = window.innerWidth / window.innerHeight;
+                        camera.updateProjectionMatrix();
+                        renderer.setSize(window.innerWidth, window.innerHeight);
+                    }
+                });
+                
+                safeLog('イベントリスナー設定完了');
+            } catch (e) {
+                safeLog('イベントリスナー設定エラー:', e.message);
+            }
         }
         
-        // ===== GLOBAL FUNCTIONS FOR ONCLICK =====
+        // ===== GLOBAL FUNCTIONS =====
         window.toggleJsonInfo = toggleJsonInfo;
-        window.closeJsonStatusModal = closeJsonStatusModal;
+        window.closeSimpleModal = closeSimpleModal;
         window.openClaudeGenerator = openClaudeGenerator;
         window.closeClaudeGenerator = closeClaudeGenerator;
         window.copyClaudePrompt = copyClaudePrompt;
@@ -1956,45 +2158,66 @@
         
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🌸 ZEN Art Portfolio Step 2: 高度なJSON管理システム 初期化開始');
+            safeLog('ZEN Art Portfolio 完全修正版: 初期化開始');
             
-            // Initialize core systems
-            loadArtworksData();
-            initThreeJS();
-            setupNavigation();
-            setupEventListeners();
-            
-            console.log('✅ ZEN Art Portfolio Step 2: 初期化完了');
+            try {
+                // Force show JSON status immediately
+                setTimeout(() => {
+                    const statusEl = document.getElementById('json-status');
+                    if (statusEl) {
+                        statusEl.style.cssText = `
+                            position: fixed !important;
+                            bottom: 20px !important;
+                            right: 20px !important;
+                            z-index: 9999 !important;
+                            display: block !important;
+                            visibility: visible !important;
+                            opacity: 1 !important;
+                            pointer-events: all !important;
+                        `;
+                        safeLog('JSON状態要素を強制表示');
+                    }
+                }, 500);
+                
+                // Initialize systems
+                loadArtworksData();
+                initThreeJS();
+                setupNavigation();
+                setupEventListeners();
+                
+                safeLog('初期化完了');
+                
+            } catch (initError) {
+                safeLog('初期化エラー:', initError.message);
+                // Try to show error state
+                setTimeout(() => {
+                    showErrorState();
+                }, 1000);
+            }
         });
         
         // ===== CLEANUP =====
         window.addEventListener('beforeunload', () => {
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-            if (renderer) {
-                renderer.dispose();
+            try {
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                if (renderer) {
+                    renderer.dispose();
+                }
+            } catch (e) {
+                // Ignore cleanup errors
             }
         });
         
         // ===== DEVELOPMENT HELPERS =====
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            // Development mode: Add auto-reload functionality
-            let lastModified = null;
-            setInterval(async () => {
-                try {
-                    const response = await fetch('artworks.json', { method: 'HEAD' });
-                    if (response.ok) {
-                        const modified = response.headers.get('last-modified');
-                        if (lastModified && modified && modified !== lastModified) {
-                            console.log('🔄 artworks.json updated, reloading data...');
-                            loadArtworksData();
-                        }
-                        lastModified = modified;
-                    }
-                } catch (err) {
-                    // Ignore errors in development mode
-                }
+            setTimeout(() => {
+                safeLog('開発モード: デバッグ情報');
+                safeLog('作品データ:', artworksData);
+                safeLog('メタデータ:', metaData);
+                safeLog('読み込み状態:', loadingState);
+                safeLog('JSONソース:', jsonSource);
             }, 2000);
         }
     </script>
