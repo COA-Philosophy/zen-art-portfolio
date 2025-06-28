@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "version": "1.0",
+    "total": 3,
+    "generated": "2025-01-28T12:00:00Z",
+    "description": "ZEN Art Portfolio 作品集 - 禅的美学とデジタル技術の融合",
+    "author": "Tatsya Minegishi",
+    "contact": "@THE.STILL.BECOMING"
+  },
+  "artworks": [
+    {
+      "id": "zen-mandala-001",
+      "title": "Zen Mandala",
+      "subtitle": "幾何学的調和",
+      "description": "Three.jsとWebGLシェーダーを用いた動的曼荼羅の生成。数学的美と禅的瞑想の融合を探求。",
+      "media": {
+        "thumbnail": {
+          "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Zen+Mandala",
+          "alt": "Zen Mandala"
+        }
+      },
+      "prompt": {
+        "midjourney": "zen mandala with intricate geometric patterns, golden ratio proportions, soft earth tones and gold accents, symmetrical design, peaceful meditative atmosphere, --ar 16:9 --style minimalist"
+      },
+      "code": {
+        "content": "// Zen Mandala with Three.js\nconst geometry = new THREE.RingGeometry(1, 100, 8, 8);\nconst material = new THREE.MeshBasicMaterial({color: 0xd4af37});\nconst mandala = new THREE.Mesh(geometry, material);"
+      },
+      "tech": ["Three.js", "GLSL", "WebGL"],
+      "featured": true
+    },
+    {
+      "id": "digital-zen-garden",
+      "title": "Digital Zen Garden",
+      "subtitle": "デジタル枯山水",
+      "description": "パーティクルシステムとノイズ関数を用いた、インタラクティブな砂庭のシミュレーション。",
+      "media": {
+        "thumbnail": {
+          "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Digital+Zen+Garden",
+          "alt": "Digital Zen Garden"
+        }
+      },
+      "prompt": {
+        "midjourney": "digital zen garden with raked sand patterns, minimalist stone arrangement, subtle lighting, serene atmosphere, --ar 16:9 --style zen"
+      },
+      "code": {
+        "content": "// Zen Garden Particle System\nclass ZenGarden {\n  constructor() {\n    this.particles = [];\n    this.initParticles();\n  }\n}"
+      },
+      "tech": ["Canvas 2D", "Particle System", "Perlin Noise"],
+      "featured": false
+    },
+    {
+      "id": "ink-meditation",
+      "title": "Ink Meditation", 
+      "subtitle": "墨絵の瞑想",
+      "description": "墨が和紙に滲む瞬間の美的表現。書道の精神性をデジタルで再現した作品。",
+      "media": {
+        "thumbnail": {
+          "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Ink+Meditation",
+          "alt": "Ink Meditation"
+        }
+      },
+      "prompt": {
+        "midjourney": "traditional japanese ink painting style, flowing black ink on white paper, organic forms, minimalist composition, --ar 16:9 --style traditional"
+      },
+      "code": {
+        "content": "// Ink Bleeding Simulation\nfunction simulateInk(x, y) {\n  const flow = noise(x, y, time);\n  return flow;\n}"
+      },
+      "tech": ["Canvas 2D", "Fluid Dynamics", "Traditional Art"],
+      "featured": false
+    }
+  ]
+}
