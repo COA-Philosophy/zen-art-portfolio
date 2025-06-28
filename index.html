@@ -1468,16 +1468,154 @@
         
         // ===== JSON STATUS TOGGLE =====
         function toggleJsonInfo() {
+            // より詳細な情報を表示する改良版
             const details = [
-                `データソース: ${jsonSource === 'json' ? 'artworks.json' : 'フォールバック'}`,
-                `作品数: ${artworksData.length}`,
-                `読み込み状態: ${loadingState}`,
-                `バージョン: ${metaData.version || 'N/A'}`,
-                `最終更新: ${metaData.generated ? new Date(metaData.generated).toLocaleString('ja-JP') : 'N/A'}`
+                `📂 データソース: ${jsonSource === 'json' ? 'artworks.json ✅' : 'フォールバックデータ ⚠️'}`,
+                `🎨 作品数: ${artworksData.length}件`,
+                `🔄 読み込み状態: ${loadingState}`,
+                `📋 バージョン: ${metaData.version || 'N/A'}`,
+                `📅 最終更新: ${metaData.generated ? new Date(metaData.generated).toLocaleString('ja-JP') : 'N/A'}`,
+                `👤 作成者: ${metaData.author || 'N/A'}`,
+                `📧 連絡先: ${metaData.contact || 'N/A'}`
             ];
             
-            const notification = createNotification('info', 'JSON状態情報', details.join('<br>'), 5000);
-            document.body.appendChild(notification);
+            showJsonStatusModal(details);
+        }
+        
+        // ===== JSON STATUS MODAL =====
+        function showJsonStatusModal(details) {
+            // 既存のモーダルがあれば削除
+            const existingModal = document.getElementById('jsonStatusModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // ステータスモーダルを作成
+            const modal = document.createElement('div');
+            modal.id = 'jsonStatusModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(248, 248, 240, 0.98);
+                backdrop-filter: blur(20px);
+                border-radius: 16px;
+                padding: 2rem;
+                max-width: 90vw;
+                width: 500px;
+                box-shadow: 0 16px 64px rgba(45, 45, 45, 0.16);
+                border: 1px solid rgba(45, 45, 45, 0.1);
+                z-index: 10003;
+                opacity: 0;
+                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+                font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            `;
+            
+            modal.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0; color: #2d2d2d; font-size: 1.25rem; font-weight: 500;">
+                        📊 システム状態情報
+                    </h3>
+                    <button onclick="closeJsonStatusModal()" style="
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: #8a8a8a;
+                        padding: 0.5rem;
+                        border-radius: 50%;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='rgba(45,45,45,0.1)'" onmouseout="this.style.background='none'">×</button>
+                </div>
+                
+                <div style="space-y: 1rem;">
+                    ${details.map(detail => `
+                        <div style="
+                            padding: 0.75rem 1rem;
+                            background: rgba(255, 255, 255, 0.7);
+                            border-radius: 8px;
+                            border-left: 3px solid #d4af37;
+                            margin-bottom: 0.5rem;
+                            font-size: 0.9rem;
+                            color: #2d2d2d;
+                        ">${detail}</div>
+                    `).join('')}
+                </div>
+                
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <button onclick="retryLoadData(); closeJsonStatusModal();" style="
+                        background: #2d2d2d;
+                        color: #f8f8f0;
+                        border: none;
+                        padding: 0.75rem 1.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        margin-right: 0.5rem;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='#d4af37'; this.style.color='#2d2d2d'" onmouseout="this.style.background='#2d2d2d'; this.style.color='#f8f8f0'">
+                        🔄 データ再読み込み
+                    </button>
+                    <button onclick="openClaudeGenerator(); closeJsonStatusModal();" style="
+                        background: transparent;
+                        color: #2d2d2d;
+                        border: 1px solid rgba(45, 45, 45, 0.2);
+                        padding: 0.75rem 1.5rem;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        transition: all 0.3s ease;
+                    " onmouseover="this.style.background='rgba(45,45,45,0.05)'" onmouseout="this.style.background='transparent'">
+                        🤖 Claude生成
+                    </button>
+                </div>
+            `;
+            
+            // オーバーレイを作成
+            const overlay = document.createElement('div');
+            overlay.id = 'jsonStatusOverlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(45, 45, 45, 0.5);
+                backdrop-filter: blur(5px);
+                z-index: 10002;
+                opacity: 0;
+                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            `;
+            
+            overlay.addEventListener('click', closeJsonStatusModal);
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+            
+            // アニメーション開始
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                modal.style.opacity = '1';
+            }, 50);
+        }
+        
+        // ===== CLOSE JSON STATUS MODAL =====
+        function closeJsonStatusModal() {
+            const modal = document.getElementById('jsonStatusModal');
+            const overlay = document.getElementById('jsonStatusOverlay');
+            
+            if (modal && overlay) {
+                modal.style.opacity = '0';
+                overlay.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (modal.parentNode) modal.parentNode.removeChild(modal);
+                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                }, 400);
+            }
         }
         
         // ===== ENHANCED GALLERY GENERATION =====
@@ -1791,6 +1929,8 @@
                         closeWorkModal();
                     } else if (document.getElementById('claudePanel').classList.contains('active')) {
                         closeClaudeGenerator();
+                    } else if (document.getElementById('jsonStatusModal')) {
+                        closeJsonStatusModal();
                     }
                 }
             });
@@ -1803,6 +1943,16 @@
                 }
             });
         }
+        
+        // ===== GLOBAL FUNCTIONS FOR ONCLICK =====
+        window.toggleJsonInfo = toggleJsonInfo;
+        window.closeJsonStatusModal = closeJsonStatusModal;
+        window.openClaudeGenerator = openClaudeGenerator;
+        window.closeClaudeGenerator = closeClaudeGenerator;
+        window.copyClaudePrompt = copyClaudePrompt;
+        window.copyPrompt = copyPrompt;
+        window.copyCode = copyCode;
+        window.retryLoadData = retryLoadData;
         
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
