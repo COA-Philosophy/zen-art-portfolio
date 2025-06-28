@@ -7,109 +7,387 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ===== ZEN DESIGN SYSTEM ===== */
+        /* ===== シンプル確実なデザインシステム ===== */
         :root {
-            /* 和風色彩パレット */
-            --zen-void: #000000;          /* 虚無 */
-            --zen-sumi: #2d2d2d;          /* 墨色 */
-            --zen-charcoal: #4a4a4a;      /* 炭色 */
-            --zen-stone: #6a6a6a;         /* 石色 */
-            --zen-silver: #8a8a8a;        /* 銀色 */
-            --zen-mist: #b8b8b8;          /* 霧色 */
-            --zen-pearl: #e8e8e8;         /* 真珠色 */
-            --zen-washi: #f8f8f0;         /* 和紙色 */
-            --zen-pure: #ffffff;          /* 純白 */
-            --zen-gold: #d4af37;          /* 金色 */
-            --zen-copper: #b87333;        /* 銅色 */
-            --zen-accent: var(--zen-gold);
+            --zen-sumi: #2d2d2d;
+            --zen-washi: #f8f8f0;
+            --zen-gold: #d4af37;
+            --zen-stone: #6a6a6a;
+            --zen-silver: #8a8a8a;
+            --zen-pearl: #e8e8e8;
+            --zen-pure: #ffffff;
             
-            /* 黄金比ベースの空間システム */
-            --golden-ratio: 1.618;
-            --space-xs: 0.25rem;
-            --space-sm: calc(var(--space-xs) * var(--golden-ratio));
-            --space-md: calc(var(--space-sm) * var(--golden-ratio));
-            --space-lg: calc(var(--space-md) * var(--golden-ratio));
-            --space-xl: calc(var(--space-lg) * var(--golden-ratio));
-            --space-2xl: calc(var(--space-xl) * var(--golden-ratio));
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
             
-            /* イージング曲線 */
-            --ease-breathing: cubic-bezier(0.4, 0.0, 0.2, 1);
-            --ease-meditation: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            --ease-zen: cubic-bezier(0.23, 1, 0.32, 1);
-            --ease-ink: cubic-bezier(0.645, 0.045, 0.355, 1);
-            
-            /* タイポグラフィスケール */
-            --font-size-xs: 0.75rem;
             --font-size-sm: 0.875rem;
             --font-size-base: 1rem;
             --font-size-lg: 1.125rem;
             --font-size-xl: 1.25rem;
             --font-size-2xl: 1.5rem;
             --font-size-3xl: 1.875rem;
-            --font-size-4xl: 2.25rem;
-            --font-size-5xl: 3rem;
-            --font-size-6xl: 3.75rem;
-            
-            /* シャドウシステム */
-            --shadow-ink: 0 2px 8px rgba(45, 45, 45, 0.1);
-            --shadow-paper: 0 4px 16px rgba(45, 45, 45, 0.08);
-            --shadow-floating: 0 8px 32px rgba(45, 45, 45, 0.12);
-            --shadow-elevated: 0 16px 64px rgba(45, 45, 45, 0.16);
         }
         
-        /* ===== RESET & BASE ===== */
+        /* ===== リセット ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        ::selection {
-            background: rgba(212, 175, 55, 0.2);
-            color: var(--zen-sumi);
-        }
-        
-        html {
-            scroll-behavior: smooth;
-            font-size: 16px;
-        }
-        
         body {
-            font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
             background: var(--zen-washi);
             color: var(--zen-sumi);
-            line-height: var(--golden-ratio);
-            overflow-x: hidden;
-            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* ===== デバッグパネル ===== */
+        .debug-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(45, 45, 45, 0.95);
+            color: #fff;
+            padding: var(--space-md);
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 9999;
+            min-width: 250px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .debug-panel h4 {
+            margin-bottom: var(--space-sm);
+            color: var(--zen-gold);
+        }
+        
+        .debug-item {
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .debug-status {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .debug-status.success { background: #10b981; color: white; }
+        .debug-status.error { background: #ef4444; color: white; }
+        .debug-status.warning { background: #f59e0b; color: white; }
+        .debug-status.loading { background: var(--zen-silver); color: white; }
+        
+        /* ===== ナビゲーション ===== */
+        .nav-wrapper {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            padding: var(--space-sm) var(--space-lg);
+            background: rgba(248, 248, 240, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            border: 1px solid rgba(45, 45, 45, 0.1);
+            display: flex;
+            gap: var(--space-lg);
+        }
+        
+        .nav-item {
+            color: var(--zen-sumi);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            transition: color 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            color: var(--zen-gold);
+        }
+        
+        .claude-generator-btn {
+            background: var(--zen-sumi);
+            color: var(--zen-washi);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 20px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .claude-generator-btn:hover {
+            background: var(--zen-gold);
+            color: var(--zen-sumi);
+        }
+        
+        /* ===== JSON状態インジケーター ===== */
+        .json-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            z-index: 9998;
+            transition: all 0.3s ease;
+        }
+        
+        .json-status.loading {
+            background: rgba(248, 248, 240, 0.9);
+            color: var(--zen-sumi);
+            border: 1px solid var(--zen-silver);
+        }
+        
+        .json-status.loaded {
+            background: rgba(212, 175, 55, 0.9);
+            color: var(--zen-sumi);
+            border: 1px solid var(--zen-gold);
+        }
+        
+        .json-status.fallback {
+            background: rgba(138, 138, 138, 0.9);
+            color: white;
+            border: 1px solid var(--zen-silver);
+        }
+        
+        .json-status.error {
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: 1px solid #dc2626;
+        }
+        
+        /* ===== ヒーローセクション ===== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: var(--space-lg);
+            background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.02), transparent 70%);
+        }
+        
+        .hero-title {
+            font-size: clamp(var(--font-size-3xl), 6vw, 4rem);
+            font-weight: 300;
+            margin-bottom: var(--space-md);
+            color: var(--zen-sumi);
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-2xl));
+            font-weight: 300;
+            color: var(--zen-stone);
+            margin-bottom: var(--space-2xl);
+            max-width: 600px;
+        }
+        
+        /* ===== メインセクション ===== */
+        .works-section {
+            padding: var(--space-2xl) var(--space-lg);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+            color: var(--zen-sumi);
+        }
+        
+        /* ===== メタ情報パネル ===== */
+        .meta-info {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+            border: 1px solid rgba(45, 45, 45, 0.05);
+        }
+        
+        .meta-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-md);
+        }
+        
+        .meta-stat-value {
+            font-size: var(--font-size-xl);
+            font-weight: 500;
+            color: var(--zen-gold);
+        }
+        
+        .meta-stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--zen-stone);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* ===== シンプルなワークスグリッド ===== */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .work-card {
+            background: white;
+            border-radius: 16px;
+            padding: var(--space-lg);
+            border: 1px solid rgba(45, 45, 45, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(45, 45, 45, 0.06);
+        }
+        
+        .work-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(45, 45, 45, 0.12);
+            border-color: var(--zen-gold);
+        }
+        
+        .work-card.featured {
+            border-color: var(--zen-gold);
             position: relative;
         }
         
-        /* ===== THREE.JS BACKGROUND ===== */
-        #zen-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            opacity: 0.4;
+        .featured-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            background: var(--zen-gold);
+            color: var(--zen-sumi);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
         }
         
-        /* ===== LOADING STATE ===== */
+        .work-preview {
+            width: 100%;
+            height: 200px;
+            background: var(--zen-pearl);
+            border-radius: 12px;
+            margin-bottom: var(--space-lg);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .work-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .work-thumbnail:hover {
+            transform: scale(1.05);
+        }
+        
+        .work-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--zen-pearl), var(--zen-washi));
+            color: var(--zen-stone);
+            font-size: var(--font-size-lg);
+            font-weight: 300;
+            text-align: center;
+            padding: var(--space-md);
+        }
+        
+        .work-title {
+            font-size: var(--font-size-xl);
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+            color: var(--zen-sumi);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        .work-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--zen-gold);
+            margin-bottom: var(--space-md);
+            font-weight: 400;
+        }
+        
+        .work-description {
+            color: var(--zen-stone);
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .work-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .action-btn {
+            flex: 1;
+            background: var(--zen-sumi);
+            color: white;
+            border: none;
+            padding: var(--space-sm);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: var(--zen-gold);
+            color: var(--zen-sumi);
+        }
+        
+        .work-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .tech-tag {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--zen-gold);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        /* ===== ローディング状態 ===== */
         .loading-state {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 400px;
+            min-height: 300px;
             color: var(--zen-stone);
-            font-size: var(--font-size-lg);
         }
         
         .loading-spinner {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             border: 3px solid var(--zen-pearl);
-            border-top: 3px solid var(--zen-accent);
+            border-top: 3px solid var(--zen-gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-right: var(--space-md);
@@ -120,33 +398,15 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* ===== ERROR STATE ===== */
+        /* ===== エラー状態 ===== */
         .error-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            color: var(--zen-stone);
             text-align: center;
-            padding: var(--space-lg);
+            padding: var(--space-2xl);
+            color: var(--zen-stone);
         }
         
         .error-icon {
-            font-size: var(--font-size-4xl);
-            margin-bottom: var(--space-md);
-            opacity: 0.6;
-        }
-        
-        .error-message {
-            font-size: var(--font-size-lg);
-            margin-bottom: var(--space-sm);
-        }
-        
-        .error-details {
-            font-size: var(--font-size-sm);
-            color: var(--zen-silver);
-            max-width: 500px;
+            font-size: var(--font-size-3xl);
             margin-bottom: var(--space-md);
         }
         
@@ -154,827 +414,33 @@
             margin-top: var(--space-lg);
             padding: var(--space-sm) var(--space-lg);
             background: var(--zen-sumi);
-            color: var(--zen-washi);
+            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: var(--font-size-sm);
-            transition: all 0.3s var(--ease-breathing);
         }
         
         .retry-button:hover {
-            background: var(--zen-accent);
+            background: var(--zen-gold);
             color: var(--zen-sumi);
         }
         
-        /* ===== JSON STATUS INDICATOR (強化版) ===== */
-        .json-status {
-            position: fixed !important;
-            bottom: 20px !important;
-            right: 20px !important;
-            z-index: 9999 !important;
-            padding: 12px 16px !important;
-            border-radius: 8px !important;
-            font-size: 13px !important;
-            font-weight: 500 !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(45, 45, 45, 0.1) !important;
-            transition: all 0.3s var(--ease-breathing) !important;
-            cursor: pointer !important;
-            min-width: 120px !important;
-            text-align: center !important;
-            box-shadow: var(--shadow-floating) !important;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            pointer-events: all !important;
-        }
-        
-        .json-status.loaded {
-            background: rgba(212, 175, 55, 0.9) !important;
-            color: var(--zen-sumi) !important;
-            border-color: rgba(212, 175, 55, 0.3) !important;
-        }
-        
-        .json-status.fallback {
-            background: rgba(138, 138, 138, 0.9) !important;
-            color: var(--zen-washi) !important;
-            border-color: rgba(138, 138, 138, 0.3) !important;
-        }
-        
-        .json-status.error {
-            background: rgba(255, 100, 100, 0.9) !important;
-            color: var(--zen-washi) !important;
-            border-color: rgba(255, 100, 100, 0.3) !important;
-        }
-        
-        .json-status.loading {
-            background: rgba(248, 248, 240, 0.9) !important;
-            color: var(--zen-sumi) !important;
-            border-color: rgba(45, 45, 45, 0.2) !important;
-        }
-        
-        .json-status:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: var(--shadow-elevated) !important;
-        }
-        
-        .json-status::before {
-            content: '📊 ' !important;
-            margin-right: 4px !important;
-        }
-        
-        /* ===== CLAUDE GENERATOR PANEL ===== */
-        .claude-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(248, 248, 240, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: var(--space-xl);
-            max-width: 90vw;
-            max-height: 90vh;
-            width: 600px;
-            box-shadow: var(--shadow-elevated);
-            border: 1px solid rgba(45, 45, 45, 0.1);
-            z-index: 10002;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.5s var(--ease-meditation);
-            overflow-y: auto;
-        }
-        
-        .claude-panel.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .claude-panel h3 {
-            font-size: var(--font-size-xl);
-            margin-bottom: var(--space-lg);
-            color: var(--zen-sumi);
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        
-        .claude-panel textarea {
-            width: 100%;
-            height: 300px;
-            padding: var(--space-md);
-            border: 1px solid rgba(45, 45, 45, 0.2);
-            border-radius: 8px;
-            background: var(--zen-pure);
-            color: var(--zen-sumi);
-            font-family: 'Inter', monospace;
-            font-size: var(--font-size-sm);
-            line-height: 1.6;
-            resize: vertical;
-            margin-bottom: var(--space-md);
-        }
-        
-        .claude-panel textarea:focus {
-            outline: none;
-            border-color: var(--zen-accent);
-            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
-        }
-        
-        .claude-panel-actions {
-            display: flex;
-            gap: var(--space-sm);
-            justify-content: flex-end;
-        }
-        
-        .claude-btn {
-            padding: var(--space-sm) var(--space-lg);
-            border: none;
-            border-radius: 8px;
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s var(--ease-breathing);
-        }
-        
-        .claude-btn.primary {
-            background: var(--zen-sumi);
-            color: var(--zen-washi);
-        }
-        
-        .claude-btn.primary:hover {
-            background: var(--zen-accent);
-            color: var(--zen-sumi);
-        }
-        
-        .claude-btn.secondary {
-            background: transparent;
-            color: var(--zen-stone);
-            border: 1px solid rgba(45, 45, 45, 0.2);
-        }
-        
-        .claude-btn.secondary:hover {
-            background: rgba(45, 45, 45, 0.05);
-        }
-        
-        /* ===== NAVIGATION ===== */
-        .nav-wrapper {
-            position: fixed;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1000;
-            display: flex;
-            gap: var(--space-md);
-        }
-        
-        .nav-container {
-            padding: var(--space-sm) var(--space-lg);
-            background: rgba(248, 248, 240, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 50px;
-            border: 1px solid rgba(45, 45, 45, 0.1);
-            box-shadow: var(--shadow-floating);
-            display: flex;
-            gap: var(--space-lg);
-            transition: all 0.4s var(--ease-zen);
-        }
-        
-        .nav-container:hover {
-            background: rgba(248, 248, 240, 0.98);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: var(--shadow-elevated);
-        }
-        
-        .nav-item {
-            color: var(--zen-charcoal);
-            text-decoration: none;
-            font-weight: 400;
-            font-size: var(--font-size-sm);
-            transition: all 0.3s var(--ease-breathing);
-            position: relative;
-            padding: var(--space-xs) 0;
-        }
-        
-        .nav-item:hover {
-            color: var(--zen-accent);
-            transform: translateY(-1px);
-        }
-        
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 1px;
-            background: var(--zen-accent);
-            transition: all 0.3s var(--ease-meditation);
-            transform: translateX(-50%);
-        }
-        
-        .nav-item:hover::after {
-            width: 100%;
-        }
-        
-        /* Claude Generator Button */
-        .claude-generator-btn {
-            background: var(--zen-sumi);
-            color: var(--zen-washi);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: 20px;
-            border: none;
-            font-size: var(--font-size-xs);
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s var(--ease-breathing);
-        }
-        
-        .claude-generator-btn:hover {
-            background: var(--zen-accent);
-            color: var(--zen-sumi);
-        }
-        
-        /* ===== HERO SECTION ===== */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: var(--space-lg);
-            position: relative;
-            background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.02), transparent 70%);
-        }
-        
-        .hero-title {
-            font-size: clamp(var(--font-size-4xl), 8vw, var(--font-size-6xl));
-            font-weight: 300;
-            margin-bottom: var(--space-md);
-            opacity: 0;
-            animation: breatheIn 2s var(--ease-meditation) 0.5s forwards;
-            letter-spacing: 0.02em;
-            color: var(--zen-sumi);
-            position: relative;
-        }
-        
-        .hero-title::after {
-            content: '';
-            position: absolute;
-            bottom: -var(--space-sm);
-            left: 50%;
-            width: 60px;
-            height: 1px;
-            background: var(--zen-accent);
-            transform: translateX(-50%);
-            opacity: 0;
-            animation: breatheIn 2s var(--ease-meditation) 1.5s forwards;
-        }
-        
-        .hero-subtitle {
-            font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-2xl));
-            font-weight: 300;
-            color: var(--zen-stone);
-            opacity: 0;
-            animation: breatheIn 2s var(--ease-meditation) 1s forwards;
-            margin-bottom: var(--space-2xl);
-            max-width: 600px;
-        }
-        
-        .scroll-indicator {
-            position: absolute;
-            bottom: var(--space-2xl);
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            animation: breatheIn 2s var(--ease-meditation) 2s forwards;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-        
-        .scroll-line {
-            width: 1px;
-            height: calc(var(--space-xl) * 2);
-            background: linear-gradient(to bottom, transparent, var(--zen-accent), transparent);
-            animation: pulse 3s ease-in-out infinite;
-        }
-        
-        .scroll-text {
-            font-size: var(--font-size-xs);
-            color: var(--zen-silver);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        /* ===== WORKS SECTION ===== */
-        .works-section {
-            padding: calc(var(--space-2xl) * 2) var(--space-lg);
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .section-title {
-            font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
-            font-weight: 300;
-            text-align: center;
-            margin-bottom: calc(var(--space-xl) * 2);
-            color: var(--zen-sumi);
-            opacity: 0;
-            transform: translateY(2rem);
-            transition: all 1s var(--ease-meditation);
-            position: relative;
-        }
-        
-        .section-title.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .section-title::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 20%;
-            width: 80px;
-            height: 1px;
-            background: var(--zen-accent);
-            transform: translateY(-50%);
-            opacity: 0.5;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 20%;
-            width: 80px;
-            height: 1px;
-            background: var(--zen-accent);
-            transform: translateY(-50%);
-            opacity: 0.5;
-        }
-        
-        /* ===== META INFO PANEL ===== */
-        .meta-info {
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 12px;
-            padding: var(--space-lg);
-            margin-bottom: var(--space-xl);
-            border: 1px solid rgba(45, 45, 45, 0.05);
-            text-align: center;
-        }
-        
-        .meta-info h3 {
-            font-size: var(--font-size-lg);
-            margin-bottom: var(--space-sm);
-            color: var(--zen-sumi);
-        }
-        
-        .meta-stats {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-xl);
-            margin-bottom: var(--space-md);
-        }
-        
-        .meta-stat {
-            text-align: center;
-        }
-        
-        .meta-stat-value {
-            font-size: var(--font-size-xl);
-            font-weight: 500;
-            color: var(--zen-accent);
-        }
-        
-        .meta-stat-label {
-            font-size: var(--font-size-xs);
-            color: var(--zen-stone);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        
-        .meta-description {
-            color: var(--zen-stone);
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--space-sm);
-        }
-        
-        .meta-author {
-            color: var(--zen-accent);
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-        }
-        
-        /* ===== WORKS GRID (完全修正版) ===== */
-        .works-grid {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
-            gap: 2rem !important;
-            margin-bottom: calc(var(--space-xl) * 3) !important;
-            width: 100% !important;
-            overflow: visible !important;
-            position: relative !important;
-            z-index: 1 !important;
-            /* デバッグ用 */
-            border: 2px dashed rgba(212, 175, 55, 0.2) !important;
-            padding: 1rem !important;
-            min-height: 800px !important;
-        }
-        
-        /* ===== WORK CARD (完全修正版) ===== */
-        .work-card {
-            /* 基本表示設定 - 確実に表示 */
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            position: relative !important;
-            z-index: 2 !important;
-            
-            /* サイズ設定 */
-            width: 100% !important;
-            min-width: 320px !important;
-            max-width: 100% !important;
-            min-height: 500px !important;
-            height: auto !important;
-            
-            /* 背景とボーダー */
-            background: rgba(255, 255, 255, 0.95) !important;
-            border-radius: 20px !important;
-            padding: var(--space-lg) !important;
-            border: 2px solid rgba(45, 45, 45, 0.1) !important;
-            box-shadow: var(--shadow-paper) !important;
-            
-            /* レイアウト */
-            overflow: visible !important;
-            transform: translateY(0) !important;
-            transition: all 0.5s var(--ease-zen) !important;
-            cursor: pointer !important;
-            
-            /* デバッグ用 */
-            outline: 1px solid rgba(212, 175, 55, 0.3) !important;
-        }
-        
-        .work-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
-            transition: left 0.8s var(--ease-meditation);
-            z-index: 1;
-        }
-        
-        .work-card:hover::before {
-            left: 100%;
-        }
-        
-        .work-card:hover {
-            transform: translateY(-8px) !important;
-            border-color: rgba(212, 175, 55, 0.4) !important;
-            box-shadow: var(--shadow-elevated) !important;
-            background: rgba(255, 255, 255, 1) !important;
-        }
-        
-        .work-card.featured {
-            border-color: rgba(212, 175, 55, 0.5) !important;
-            background: rgba(255, 255, 255, 1) !important;
-        }
-        
-        .featured-badge {
-            position: absolute;
-            top: var(--space-md);
-            right: var(--space-md);
-            background: var(--zen-accent);
-            color: var(--zen-sumi);
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: 12px;
-            font-size: var(--font-size-xs);
-            font-weight: 500;
-            z-index: 10;
-        }
-        
-        /* ===== WORK PREVIEW (完全修正版) ===== */
-        .work-preview {
-            width: 100% !important;
-            height: 200px !important;
-            background: var(--zen-washi) !important;
-            border-radius: 12px !important;
-            margin-bottom: var(--space-lg) !important;
-            position: relative !important;
-            overflow: hidden !important;
-            border: 1px solid rgba(45, 45, 45, 0.08) !important;
-            z-index: 2 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-        
-        .work-thumbnail {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            display: block !important;
-            transition: all 0.3s var(--ease-breathing) !important;
-        }
-        
-        .work-thumbnail:hover {
-            transform: scale(1.02);
-        }
-        
-        .work-placeholder {
-            width: 100% !important;
-            height: 100% !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: linear-gradient(135deg, var(--zen-washi), var(--zen-pearl)) !important;
-            color: var(--zen-stone) !important;
-            font-size: var(--font-size-lg) !important;
-            font-weight: 300 !important;
-            text-align: center !important;
-            line-height: 1.4 !important;
-            padding: 1rem !important;
-        }
-        
-        /* ===== WORK CARD CONTENT ===== */
-        .work-content {
-            position: relative !important;
-            z-index: 2 !important;
-            display: block !important;
-            width: 100% !important;
-        }
-        
-        .work-title {
-            font-size: var(--font-size-xl) !important;
-            font-weight: 500 !important;
-            margin-bottom: var(--space-sm) !important;
-            color: var(--zen-sumi) !important;
-            font-family: 'Noto Sans JP', sans-serif !important;
-            display: block !important;
-        }
-        
-        .work-subtitle {
-            font-size: var(--font-size-sm) !important;
-            color: var(--zen-accent) !important;
-            margin-bottom: var(--space-md) !important;
-            font-weight: 400 !important;
-            display: block !important;
-        }
-        
-        .work-description {
-            color: var(--zen-stone) !important;
-            font-size: var(--font-size-sm) !important;
-            line-height: var(--golden-ratio) !important;
-            margin-bottom: var(--space-lg) !important;
-            display: block !important;
-        }
-        
-        .work-actions {
-            display: flex !important;
-            gap: var(--space-sm) !important;
-            margin-bottom: var(--space-md) !important;
-            width: 100% !important;
-        }
-        
-        .action-btn {
-            flex: 1 !important;
-            background: var(--zen-sumi) !important;
-            color: var(--zen-washi) !important;
-            border: none !important;
-            padding: var(--space-sm) var(--space-md) !important;
-            border-radius: 8px !important;
-            cursor: pointer !important;
-            font-size: var(--font-size-xs) !important;
-            font-weight: 500 !important;
-            transition: all 0.3s var(--ease-breathing) !important;
-            position: relative !important;
-            overflow: hidden !important;
-            z-index: 5 !important;
-        }
-        
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--zen-accent);
-            transition: left 0.3s var(--ease-breathing);
-            z-index: -1;
-        }
-        
-        .action-btn:hover::before {
-            left: 0;
-        }
-        
-        .action-btn:hover {
-            color: var(--zen-sumi) !important;
-            transform: translateY(-1px) !important;
-        }
-        
-        .work-tech {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: var(--space-xs) !important;
-            width: 100% !important;
-        }
-        
-        .tech-tag {
-            background: rgba(212, 175, 55, 0.1) !important;
-            color: var(--zen-accent) !important;
-            padding: var(--space-xs) var(--space-sm) !important;
-            border-radius: 16px !important;
-            font-size: var(--font-size-xs) !important;
-            border: 1px solid rgba(212, 175, 55, 0.2) !important;
-            font-weight: 400 !important;
-            display: inline-block !important;
-        }
-        
-        /* ===== MODAL SYSTEM ===== */
-        .work-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(45, 45, 45, 0.95);
-            backdrop-filter: blur(20px);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.5s var(--ease-meditation);
-        }
-        
-        .work-modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .modal-header {
-            padding: var(--space-lg);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(232, 232, 232, 0.1);
-            background: rgba(248, 248, 240, 0.05);
-        }
-        
-        .modal-title {
-            color: var(--zen-washi);
-            font-size: var(--font-size-2xl);
-            font-weight: 300;
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        
-        .close-btn {
-            background: rgba(248, 248, 240, 0.1);
-            border: 1px solid rgba(248, 248, 240, 0.2);
-            color: var(--zen-washi);
-            font-size: var(--font-size-2xl);
-            cursor: pointer;
-            padding: var(--space-sm);
-            transition: all 0.3s var(--ease-breathing);
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .close-btn:hover {
-            background: var(--zen-accent);
-            color: var(--zen-sumi);
-            transform: rotate(90deg);
-        }
-        
-        .modal-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            background: var(--zen-washi);
-        }
-        
-        .work-canvas {
-            width: 100%;
-            height: 100%;
-            background: var(--zen-washi);
-            display: block;
-        }
-        
-        /* ===== PHILOSOPHY SECTION ===== */
-        .philosophy-section {
-            padding: calc(var(--space-2xl) * 2) var(--space-lg);
-            background: linear-gradient(135deg, rgba(45, 45, 45, 0.02), rgba(212, 175, 55, 0.02));
-            text-align: center;
-            position: relative;
-        }
-        
-        .philosophy-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--zen-accent), transparent);
-            opacity: 0.3;
-        }
-        
-        .philosophy-text {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: var(--font-size-lg);
-            line-height: calc(var(--golden-ratio) * 1.2);
-            color: var(--zen-stone);
-            opacity: 0;
-            transform: translateY(2rem);
-            transition: all 1s var(--ease-meditation);
-            font-family: 'Noto Sans JP', sans-serif;
-        }
-        
-        .philosophy-text.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* ===== FOOTER ===== */
+        /* ===== フッター ===== */
         footer {
-            padding: calc(var(--space-xl) * 2) var(--space-lg) var(--space-lg);
+            padding: var(--space-2xl) var(--space-lg);
             text-align: center;
             border-top: 1px solid rgba(45, 45, 45, 0.1);
             background: rgba(248, 248, 240, 0.5);
-        }
-        
-        .footer-content {
             color: var(--zen-silver);
             font-size: var(--font-size-sm);
-            max-width: 600px;
-            margin: 0 auto;
         }
         
-        /* ===== ANIMATIONS ===== */
-        @keyframes breatheIn {
-            from {
-                opacity: 0;
-                transform: translateY(2rem);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { 
-                opacity: 0.4; 
-                transform: scaleY(1);
-            }
-            50% { 
-                opacity: 1; 
-                transform: scaleY(1.2);
-            }
-        }
-        
-        /* ===== RESPONSIVE DESIGN ===== */
+        /* ===== レスポンシブ ===== */
         @media (max-width: 768px) {
-            .claude-panel {
-                width: 95vw;
-                padding: var(--space-lg);
-            }
-            
-            .nav-wrapper {
-                top: var(--space-md);
-                right: var(--space-md);
-                left: var(--space-md);
-            }
-            
-            .nav-container {
-                justify-content: center;
-                gap: var(--space-md);
-                padding: var(--space-sm) var(--space-md);
-                flex-wrap: wrap;
-            }
-            
             .works-grid {
-                grid-template-columns: 1fr !important;
-                gap: 1.5rem !important;
-            }
-            
-            .work-card {
-                padding: var(--space-md) !important;
-                min-width: 280px !important;
-            }
-            
-            .work-preview {
-                height: 180px !important;
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
             }
             
             .meta-stats {
@@ -982,50 +448,45 @@
                 gap: var(--space-md);
             }
             
-            .json-status {
-                bottom: 16px !important;
-                right: 16px !important;
-                font-size: 11px !important;
-                padding: 8px 12px !important;
+            .debug-panel {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: var(--space-lg);
             }
-        }
-        
-        /* ===== デバッグ表示用スタイル ===== */
-        .debug-info {
-            position: fixed;
-            top: 100px;
-            left: 20px;
-            background: rgba(45, 45, 45, 0.9);
-            color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            z-index: 9998;
-            max-width: 300px;
-            display: none;
-        }
-        
-        .debug-info.show {
-            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Three.js Background Canvas -->
-    <canvas id="zen-canvas"></canvas>
-    
-    <!-- デバッグ情報パネル -->
-    <div id="debug-info" class="debug-info">
-        <div>作品数: <span id="debug-count">0</span></div>
-        <div>表示済み: <span id="debug-visible">0</span></div>
-        <div>状態: <span id="debug-status">loading</span></div>
+    <!-- デバッグパネル -->
+    <div id="debug-panel" class="debug-panel">
+        <h4>🔍 システム状態</h4>
+        <div class="debug-item">
+            <span>JSON読み込み:</span>
+            <span id="debug-json" class="debug-status loading">確認中</span>
+        </div>
+        <div class="debug-item">
+            <span>作品データ:</span>
+            <span id="debug-data" class="debug-status loading">0件</span>
+        </div>
+        <div class="debug-item">
+            <span>カード生成:</span>
+            <span id="debug-cards" class="debug-status loading">0件</span>
+        </div>
+        <div class="debug-item">
+            <span>画像読み込み:</span>
+            <span id="debug-images" class="debug-status loading">0/0</span>
+        </div>
+        <div class="debug-item">
+            <span>最終更新:</span>
+            <span id="debug-time">--:--:--</span>
+        </div>
     </div>
     
-    <!-- Navigation -->
+    <!-- ナビゲーション -->
     <div class="nav-wrapper">
         <nav class="nav-container">
             <a href="#works" class="nav-item">作品</a>
-            <a href="#philosophy" class="nav-item">哲学</a>
             <a href="#contact" class="nav-item">結縁</a>
             <button class="claude-generator-btn" onclick="openClaudeGenerator()">
                 🤖 Claude生成
@@ -1033,28 +494,23 @@
         </nav>
     </div>
     
-    <!-- JSON Status Indicator (強化版) -->
-    <div id="json-status" class="json-status loading" onclick="toggleJsonInfo()">
+    <!-- JSON状態インジケーター -->
+    <div id="json-status" class="json-status loading" onclick="showDetailedStatus()">
         <span id="json-status-text">読み込み中...</span>
     </div>
     
-    <!-- Hero Section -->
+    <!-- ヒーローセクション -->
     <section class="hero">
         <h1 class="hero-title">ZEN Art Portfolio</h1>
         <p class="hero-subtitle">技術と瞑想の交差点で生まれる美的実験</p>
-        <div class="scroll-indicator">
-            <div class="scroll-line"></div>
-            <span class="scroll-text">scroll</span>
-        </div>
     </section>
     
-    <!-- Works Section -->
+    <!-- 作品セクション -->
     <section id="works" class="works-section">
         <h2 class="section-title">禅的技術実験</h2>
         
-        <!-- Meta Info Panel -->
+        <!-- メタ情報パネル -->
         <div id="meta-info" class="meta-info" style="display: none;">
-            <h3>コレクション情報</h3>
             <div class="meta-stats">
                 <div class="meta-stat">
                     <div class="meta-stat-value" id="meta-total">-</div>
@@ -1069,161 +525,101 @@
                     <div class="meta-stat-label">更新日</div>
                 </div>
             </div>
-            <div class="meta-description" id="meta-description">-</div>
-            <div class="meta-author" id="meta-author">-</div>
+            <div id="meta-description" style="color: var(--zen-stone); margin-bottom: var(--space-sm);">-</div>
+            <div id="meta-author" style="color: var(--zen-gold);">-</div>
         </div>
         
         <div id="gallery" class="works-grid">
-            <!-- 作品カードはここに動的生成される -->
+            <!-- 作品カードはここに生成される -->
         </div>
     </section>
     
-    <!-- Philosophy Section -->
-    <section id="philosophy" class="philosophy-section">
-        <h2 class="section-title">哲学</h2>
-        <div class="philosophy-text">
-            墨が和紙に滲む瞬間の美。雨が斜めに降る浮世絵の詩情。<br>
-            桜が舞い散る一瞬の無常観。月光が水面に映る静寂。<br><br>
-            
-            古来より日本人が愛でてきた自然の美を、現代のデジタル技術で再現する。<br>
-            WebGL、Three.js、Canvas API——最新の技術を使って、<br>
-            千年変わらない美の本質を表現する実験。<br><br>
-            
-            これは技術者としての修行であり、美的探求の記録である。
-        </div>
-    </section>
-    
-    <!-- Footer -->
+    <!-- フッター -->
     <footer id="contact">
-        <div class="footer-content">
-            <p>© 2025 ZEN Art Portfolio - 継続的な美的探求の記録</p>
-            <p style="margin-top: var(--space-sm); font-size: var(--font-size-sm); color: var(--zen-silver);">
-                Created By <span style="color: var(--zen-accent); font-weight: 500;">Tatsya Minegishi</span>
-            </p>
-            <p style="margin-top: var(--space-xs); font-size: var(--font-size-sm); color: var(--zen-stone);">
-                連絡先: <span style="color: var(--zen-accent);">@THE.STILL.BECOMING</span>
-            </p>
-        </div>
-    </footer>
-    
-    <!-- Work Modal -->
-    <div id="workModal" class="work-modal">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalTitle">作品タイトル</h3>
-            <button class="close-btn" id="closeModal">×</button>
-        </div>
-        <div class="modal-content">
-            <canvas class="work-canvas" id="workCanvas"></canvas>
-        </div>
-    </div>
-    
-    <!-- Claude Generator Panel -->
-    <div id="claudePanel" class="claude-panel">
-        <h3>🤖 Claude作品生成システム</h3>
-        <p style="margin-bottom: var(--space-lg); color: var(--zen-stone); font-size: var(--font-size-sm);">
-            以下のプロンプトをClaudeに送信して、新しい作品データを生成してください。
+        <p>© 2025 ZEN Art Portfolio - 継続的な美的探求の記録</p>
+        <p style="margin-top: var(--space-sm);">
+            Created By <span style="color: var(--zen-gold); font-weight: 500;">Tatsya Minegishi</span>
         </p>
-        <textarea id="claudePrompt" readonly>以下のJSON形式で、禅的アート作品を6個生成してください：
-
-{
-  "meta": {
-    "version": "1.0",
-    "total": 6,
-    "generated": "2025-01-28T12:00:00Z",
-    "description": "ZEN Art Portfolio 作品集 - 禅的美学とデジタル技術の融合",
-    "author": "Tatsya Minegishi",
-    "contact": "@THE.STILL.BECOMING"
-  },
-  "categories": {
-    "zen": "禅的作品",
-    "technical": "技術実験",
-    "interactive": "インタラクティブ",
-    "generative": "ジェネラティブ"
-  },
-  "artworks": [
-    {
-      "id": "unique-work-id",
-      "title": "作品タイトル",
-      "subtitle": "作品副題",
-      "description": "作品の説明文（120文字程度）",
-      "media": {
-        "thumbnail": {
-          "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Work+Title",
-          "alt": "作品タイトル"
-        },
-        "animation": {
-          "type": "mandala",
-          "desktop_only": true
-        }
-      },
-      "prompt": {
-        "midjourney": "実際に使えるMidjourneyプロンプト（--ar 16:9含む）",
-        "description": "プロンプトの詳細説明"
-      },
-      "code": {
-        "language": "javascript",
-        "content": "実際に動作するコード例（改行は\\nで表現）"
-      },
-      "tech": ["Three.js", "WebGL", "Canvas"],
-      "category": "zen",
-      "featured": true,
-      "created": "2025-01-28",
-      "tags": ["meditation", "geometry", "interactive"]
-    }
-  ]
-}
-
-要求事項：
-- テーマ：禅、自然、日本美学、瞑想、デジタルアート
-- 技術：Three.js, Canvas, WebGL, SVG, GLSL, CSS Animation
-- 各作品は独自の特徴と美的価値を持つこと
-- プロンプトは実際にMidjourneyで使用可能であること
-- コードは学習・参考用として価値があること
-- プレースホルダー画像のテキストは英語で設定
-- animationタイプ：mandala, zen-garden, ink, breathing, sakura, moonlight等
-
-完全なJSONのみを出力してください。</textarea>
-        <div class="claude-panel-actions">
-            <button class="claude-btn secondary" onclick="closeClaudeGenerator()">閉じる</button>
-            <button class="claude-btn primary" onclick="copyClaudePrompt()">プロンプトをコピー</button>
-        </div>
-    </div>
+        <p style="margin-top: 4px;">
+            連絡先: <span style="color: var(--zen-gold);">@THE.STILL.BECOMING</span>
+        </p>
+    </footer>
 
     <script>
-        // ===== ZEN ART PORTFOLIO SYSTEM (ULTIMATE FIX) =====
+        // ===== ZEN ART PORTFOLIO SYSTEM (シンプル確実版) =====
         
-        // ===== GLOBAL VARIABLES =====
+        // ===== グローバル変数 =====
         let artworksData = [];
         let metaData = {};
         let loadingState = 'loading';
         let jsonSource = 'unknown';
-        let debugMode = false;
+        let imageLoadCount = 0;
+        let totalImages = 0;
         
-        // ===== ENHANCED FALLBACK DATA =====
-        const FALLBACK_DATA = {
+        // ===== デバッグ関数 =====
+        function updateDebugPanel() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ja-JP');
+            
+            document.getElementById('debug-time').textContent = timeStr;
+            document.getElementById('debug-data').textContent = `${artworksData.length}件`;
+            document.getElementById('debug-data').className = `debug-status ${artworksData.length > 0 ? 'success' : 'warning'}`;
+            
+            const cardCount = document.querySelectorAll('.work-card').length;
+            document.getElementById('debug-cards').textContent = `${cardCount}件`;
+            document.getElementById('debug-cards').className = `debug-status ${cardCount > 0 ? 'success' : 'warning'}`;
+            
+            document.getElementById('debug-images').textContent = `${imageLoadCount}/${totalImages}`;
+            document.getElementById('debug-images').className = `debug-status ${imageLoadCount === totalImages && totalImages > 0 ? 'success' : 'loading'}`;
+        }
+        
+        function log(message, data = null) {
+            console.log(`🎨 ${message}`, data || '');
+            updateDebugPanel();
+        }
+        
+        // ===== JSON状態更新 =====
+        function updateJsonStatus(status, text) {
+            const statusEl = document.getElementById('json-status');
+            const textEl = document.getElementById('json-status-text');
+            const debugEl = document.getElementById('debug-json');
+            
+            if (statusEl && textEl) {
+                statusEl.className = `json-status ${status}`;
+                textEl.textContent = text;
+                
+                // デバッグパネルも更新
+                debugEl.textContent = status;
+                debugEl.className = `debug-status ${status === 'loaded' ? 'success' : status === 'error' ? 'error' : 'warning'}`;
+            }
+            
+            log(`JSON状態: ${status} - ${text}`);
+        }
+        
+        // ===== シンプルなフォールバックデータ =====
+        const SIMPLE_FALLBACK_DATA = {
             "meta": {
-                "version": "1.0-fallback",
+                "version": "1.0-simple",
                 "total": 6,
                 "generated": new Date().toISOString(),
-                "description": "フォールバックサンプルデータ - artworks.jsonを作成してください",
+                "description": "ZEN Art Portfolio 作品集 - 禅的美学とデジタル技術の融合",
                 "author": "Tatsya Minegishi",
                 "contact": "@THE.STILL.BECOMING"
             },
             "artworks": [
                 {
-                    "id": "zen-mandala-sample",
+                    "id": "zen-mandala",
                     "title": "Zen Mandala",
                     "subtitle": "幾何学的調和",
                     "description": "Three.jsとWebGLシェーダーを用いた動的曼荼羅の生成。数学的美と禅的瞑想の融合を探求した実験的作品です。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://picsum.photos/600/400?random=1",
+                            "url": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600&h=400&fit=crop&crop=center",
                             "alt": "Zen Mandala"
                         }
                     },
                     "prompt": {
-                        "midjourney": "zen mandala with intricate geometric patterns, golden ratio proportions, soft earth tones and gold accents, symmetrical design, peaceful meditative atmosphere, --ar 16:9 --style minimalist",
-                        "description": "幾何学的で瞑想的な曼荼羅を生成するプロンプト"
+                        "midjourney": "zen mandala with intricate geometric patterns, golden ratio proportions, soft earth tones and gold accents, symmetrical design, peaceful meditative atmosphere, --ar 16:9 --style minimalist"
                     },
                     "code": {
                         "language": "javascript",
@@ -1236,23 +632,22 @@
                     "tags": ["meditation", "geometry", "interactive"]
                 },
                 {
-                    "id": "digital-zen-garden-sample",
+                    "id": "digital-zen-garden",
                     "title": "Digital Zen Garden", 
                     "subtitle": "デジタル枯山水",
                     "description": "パーティクルシステムとノイズ関数を用いた、インタラクティブな砂庭のシミュレーション。静寂と動きの絶妙なバランス。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://picsum.photos/600/400?random=2",
+                            "url": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop&crop=center",
                             "alt": "Digital Zen Garden"
                         }
                     },
                     "prompt": {
-                        "midjourney": "digital zen garden with raked sand patterns, minimalist stone arrangement, subtle lighting, serene atmosphere, --ar 16:9 --style zen",
-                        "description": "デジタル技術で再現された枯山水庭園"
+                        "midjourney": "digital zen garden with raked sand patterns, minimalist stone arrangement, subtle lighting, serene atmosphere, --ar 16:9 --style zen"
                     },
                     "code": {
                         "language": "javascript",
-                        "content": "// Zen garden particle system\nclass ZenGarden {\n  constructor() {\n    this.particles = [];\n    this.initParticles();\n  }\n  \n  initParticles() {\n    for(let i = 0; i < 1000; i++) {\n      this.particles.push(new Particle());\n    }\n  }\n}"
+                        "content": "// Zen garden particle system\nclass ZenGarden {\n  constructor() {\n    this.particles = [];\n    this.initParticles();\n  }\n}"
                     },
                     "tech": ["Canvas 2D", "Particle System", "Perlin Noise"],
                     "category": "zen",
@@ -1261,23 +656,22 @@
                     "tags": ["zen-garden", "particles", "interactive"]
                 },
                 {
-                    "id": "ink-meditation-sample",
+                    "id": "ink-meditation",
                     "title": "Ink Meditation",
                     "subtitle": "墨絵の瞑想",
                     "description": "墨が和紙に滲む瞬間の美的表現。書道の精神性をデジタルで再現し、一筆一筆に込められた意味を探求します。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://picsum.photos/600/400?random=3",
+                            "url": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop&crop=center",
                             "alt": "Ink Meditation"
                         }
                     },
                     "prompt": {
-                        "midjourney": "traditional japanese ink painting style, flowing black ink on white paper, organic forms, minimalist composition, --ar 16:9 --style traditional",
-                        "description": "伝統的な墨絵の美学をデジタルで表現"
+                        "midjourney": "traditional japanese ink painting style, flowing black ink on white paper, organic forms, minimalist composition, --ar 16:9 --style traditional"
                     },
                     "code": {
                         "language": "javascript",
-                        "content": "// Ink bleeding simulation\nfunction simulateInk(x, y) {\n  const flow = noise(x * 0.01, y * 0.01, time * 0.001);\n  const intensity = Math.sin(time * 0.002) * 0.5 + 0.5;\n  return flow * intensity;\n}"
+                        "content": "// Ink bleeding simulation\nfunction simulateInk(x, y) {\n  const flow = noise(x * 0.01, y * 0.01, time * 0.001);\n  return flow;\n}"
                     },
                     "tech": ["Canvas 2D", "Fluid Dynamics", "Traditional Art"],
                     "category": "zen",
@@ -1286,23 +680,22 @@
                     "tags": ["ink", "calligraphy", "traditional"]
                 },
                 {
-                    "id": "sakura-particles-sample",
+                    "id": "sakura-particles",
                     "title": "Sakura Particles",
                     "subtitle": "桜散りゆく",
                     "description": "風に舞う桜の花びらをパーティクルシステムで表現。季節の移ろいと無常観を技術で描く詩的な実験です。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://picsum.photos/600/400?random=4",
+                            "url": "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=600&h=400&fit=crop&crop=center",
                             "alt": "Sakura Particles"
                         }
                     },
                     "prompt": {
-                        "midjourney": "falling cherry blossoms, soft pink petals floating in air, gentle spring breeze, ethereal atmosphere, --ar 16:9 --style soft",
-                        "description": "風に舞う桜の花びらの美しい瞬間"
+                        "midjourney": "falling cherry blossoms, soft pink petals floating in air, gentle spring breeze, ethereal atmosphere, --ar 16:9 --style soft"
                     },
                     "code": {
                         "language": "javascript",
-                        "content": "// Falling Cherry Blossoms\nclass SakuraPetal {\n  constructor() {\n    this.x = Math.random() * canvas.width;\n    this.y = -10;\n    this.speed = Math.random() * 2 + 1;\n    this.rotation = 0;\n    this.rotationSpeed = (Math.random() - 0.5) * 0.1;\n  }\n}"
+                        "content": "// Falling Cherry Blossoms\nclass SakuraPetal {\n  constructor() {\n    this.x = Math.random() * canvas.width;\n    this.y = -10;\n    this.speed = Math.random() * 2 + 1;\n  }\n}"
                     },
                     "tech": ["Canvas", "JavaScript", "Particle System"],
                     "category": "zen",
@@ -1311,23 +704,22 @@
                     "tags": ["sakura", "nature", "seasons"]
                 },
                 {
-                    "id": "sacred-geometry-sample",
+                    "id": "sacred-geometry",
                     "title": "Sacred Geometry",
                     "subtitle": "聖なる幾何学",
                     "description": "黄金比とフィボナッチ数列に基づく神聖幾何学パターン。WebGLシェーダーで描画される複雑な幾何学的調和。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://picsum.photos/600/400?random=5",
+                            "url": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&h=400&fit=crop&crop=center",
                             "alt": "Sacred Geometry"
                         }
                     },
                     "prompt": {
-                        "midjourney": "sacred geometry patterns, golden ratio spirals, fibonacci sequences, mathematical beauty, mystical symbols, --ar 16:9 --style geometric",
-                        "description": "神聖幾何学の複雑で美しいパターン"
+                        "midjourney": "sacred geometry patterns, golden ratio spirals, fibonacci sequences, mathematical beauty, mystical symbols, --ar 16:9 --style geometric"
                     },
                     "code": {
                         "language": "glsl",
-                        "content": "// Sacred Geometry Shader\n#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform float u_time;\nuniform vec2 u_resolution;\n\nvoid main() {\n  vec2 st = gl_FragCoord.xy/u_resolution.xy;\n  float r = length(st - 0.5);\n  float a = atan(st.y - 0.5, st.x - 0.5);\n  \n  float pattern = sin(r * 20.0 + u_time) * sin(a * 8.0);\n  vec3 color = vec3(pattern);\n  \n  gl_FragColor = vec4(color, 1.0);\n}"
+                        "content": "// Sacred Geometry Shader\nfloat pattern = sin(r * 20.0 + u_time) * sin(a * 8.0);\nvec3 color = vec3(pattern);\ngl_FragColor = vec4(color, 1.0);"
                     },
                     "tech": ["Three.js", "WebGL", "GLSL"],
                     "category": "technical",
@@ -1336,23 +728,22 @@
                     "tags": ["geometry", "mathematics", "shaders"]
                 },
                 {
-                    "id": "moonlight-reflection-sample",
+                    "id": "moonlight-reflection",
                     "title": "Moonlight Reflection",
                     "subtitle": "月光水面",
                     "description": "静寂な湖面に映る月光の揺らめき。リアルタイム反射計算とノイズを組み合わせた幻想的な水面表現。",
                     "media": {
                         "thumbnail": {
-                            "url": "https://picsum.photos/600/400?random=6",
+                            "url": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop&crop=center",
                             "alt": "Moonlight Reflection"
                         }
                     },
                     "prompt": {
-                        "midjourney": "moonlight reflecting on calm water surface, gentle ripples, serene night atmosphere, silver and blue tones, --ar 16:9 --style atmospheric",
-                        "description": "静寂な夜の湖面に映る神秘的な月光"
+                        "midjourney": "moonlight reflecting on calm water surface, gentle ripples, serene night atmosphere, silver and blue tones, --ar 16:9 --style atmospheric"
                     },
                     "code": {
                         "language": "javascript",
-                        "content": "// Moonlight water reflection\nclass WaterSurface {\n  constructor(canvas) {\n    this.canvas = canvas;\n    this.ctx = canvas.getContext('2d');\n    this.waves = [];\n    this.initWaves();\n  }\n  \n  render() {\n    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);\n    this.drawMoonlight();\n    this.drawWaves();\n  }\n}"
+                        "content": "// Moonlight water reflection\nclass WaterSurface {\n  constructor(canvas) {\n    this.canvas = canvas;\n    this.ctx = canvas.getContext('2d');\n  }\n}"
                     },
                     "tech": ["Canvas 2D", "Mouse Interaction", "Real-time"],
                     "category": "zen",
@@ -1363,1064 +754,335 @@
             ]
         };
         
-        // ===== DEBUG FUNCTIONS =====
-        function safeLog(message, data = null) {
-            try {
-                if (data) {
-                    console.log(`🎨 ${message}`, data);
-                } else {
-                    console.log(`🎨 ${message}`);
-                }
-            } catch (e) {
-                // Ignore console errors
-            }
-        }
-        
-        function updateDebugInfo() {
-            try {
-                if (debugMode) {
-                    document.getElementById('debug-info').classList.add('show');
-                    document.getElementById('debug-count').textContent = artworksData.length;
-                    document.getElementById('debug-visible').textContent = document.querySelectorAll('.work-card').length;
-                    document.getElementById('debug-status').textContent = loadingState;
-                }
-            } catch (e) {
-                // Ignore debug errors
-            }
-        }
-        
-        function updateJsonStatus(status, text) {
-            try {
-                const statusEl = document.getElementById('json-status');
-                const textEl = document.getElementById('json-status-text');
-                
-                if (statusEl && textEl) {
-                    statusEl.className = `json-status ${status}`;
-                    statusEl.style.cssText = `
-                        position: fixed !important;
-                        bottom: 20px !important;
-                        right: 20px !important;
-                        z-index: 9999 !important;
-                        display: block !important;
-                        visibility: visible !important;
-                        opacity: 1 !important;
-                        pointer-events: all !important;
-                    `;
-                    textEl.textContent = text;
-                    
-                    safeLog(`JSON状態更新: ${status} - ${text}`);
-                }
-            } catch (e) {
-                safeLog('JSON状態更新エラー:', e.message);
-            }
-        }
-        
-        function validateArtworkData(data) {
-            try {
-                if (!data || typeof data !== 'object') {
-                    return ['Invalid JSON structure'];
-                }
-                
-                if (!data.artworks || !Array.isArray(data.artworks)) {
-                    return ['Missing or invalid artworks array'];
-                }
-                
-                return [];
-            } catch (e) {
-                return ['Validation error: ' + e.message];
-            }
-        }
-        
-        function sanitizeArtworkData(data) {
-            try {
-                if (!data.artworks) return data;
-                
-                data.artworks = data.artworks.map((artwork, index) => {
-                    const safeArtwork = {
-                        id: artwork.id || `artwork-${Date.now()}-${index}`,
-                        title: artwork.title || 'Untitled Work',
-                        subtitle: artwork.subtitle || '',
-                        description: artwork.description || 'No description available',
-                        media: artwork.media || {
-                            thumbnail: {
-                                url: `https://picsum.photos/600/400?random=${index + 10}`,
-                                alt: artwork.title || 'Untitled Work'
-                            }
-                        },
-                        prompt: artwork.prompt || { 
-                            midjourney: 'No prompt available', 
-                            description: '' 
-                        },
-                        code: artwork.code || { 
-                            language: 'javascript', 
-                            content: '// No code available' 
-                        },
-                        tech: artwork.tech || [],
-                        category: artwork.category || 'general',
-                        featured: artwork.featured || false,
-                        created: artwork.created || new Date().toISOString().split('T')[0],
-                        tags: artwork.tags || []
-                    };
-                    
-                    // Ensure thumbnail URL is valid
-                    if (!safeArtwork.media.thumbnail.url || safeArtwork.media.thumbnail.url.includes('placehold.co')) {
-                        safeArtwork.media.thumbnail.url = `https://picsum.photos/600/400?random=${index + 10}`;
-                    }
-                    
-                    return safeArtwork;
-                });
-                
-                return data;
-            } catch (e) {
-                safeLog('データサニタイズエラー:', e.message);
-                return data;
-            }
-        }
-        
+        // ===== 作品データ読み込み =====
         async function loadArtworksData() {
-            safeLog('ZEN Portfolio: 緊急修正版データ読み込み開始');
+            log('シンプル版: データ読み込み開始');
             updateJsonStatus('loading', 'データ読み込み中...');
             
             try {
-                // Try to load artworks.json
-                const possibleFiles = ['artworks.json', 'data/artworks.json', './artworks.json'];
-                let data = null;
-                let loadedFrom = null;
+                // 複数のパスを試行
+                const possiblePaths = [
+                    '/artworks.json',
+                    './artworks.json',
+                    'artworks.json',
+                    '/public/artworks.json'
+                ];
                 
-                for (const file of possibleFiles) {
+                let data = null;
+                let successPath = null;
+                
+                for (const path of possiblePaths) {
                     try {
-                        safeLog(`ファイル試行: ${file}`);
-                        const response = await fetch(file);
+                        log(`JSONファイル試行: ${path}`);
+                        const response = await fetch(path);
                         
                         if (response.ok) {
-                            const jsonText = await response.text();
-                            data = JSON.parse(jsonText);
-                            loadedFrom = file;
+                            const text = await response.text();
+                            log(`JSON取得成功: ${path} (${text.length}文字)`);
+                            
+                            data = JSON.parse(text);
+                            successPath = path;
                             break;
+                        } else {
+                            log(`HTTP エラー: ${path} → ${response.status}`);
                         }
-                    } catch (err) {
-                        safeLog(`${file} 読み込み失敗:`, err.message);
-                        continue;
+                    } catch (fetchError) {
+                        log(`取得エラー: ${path} → ${fetchError.message}`);
                     }
                 }
                 
                 if (!data) {
-                    throw new Error('No artworks.json file found');
+                    throw new Error('artworks.jsonが見つかりません');
                 }
                 
-                // Validate and sanitize data
-                const validationErrors = validateArtworkData(data);
-                if (validationErrors.length > 0) {
-                    safeLog('JSON検証警告:', validationErrors);
+                // データ検証
+                if (!data.artworks || !Array.isArray(data.artworks)) {
+                    throw new Error('artworks配列が見つかりません');
                 }
                 
-                data = sanitizeArtworkData(data);
+                if (data.artworks.length === 0) {
+                    throw new Error('artworks配列が空です');
+                }
+                
+                // データ設定
                 artworksData = data.artworks;
                 metaData = data.meta || {};
                 loadingState = 'loaded';
                 jsonSource = 'json';
                 
-                safeLog(`JSON読み込み成功: ${artworksData.length}件の作品`);
+                log(`JSON読み込み成功: ${artworksData.length}件の作品 (${successPath})`);
                 updateJsonStatus('loaded', `${artworksData.length}作品 (JSON)`);
                 
             } catch (error) {
-                safeLog('JSON読み込み失敗、フォールバック使用:', error.message);
+                log(`JSON読み込みエラー: ${error.message}`);
+                log('フォールバックデータを使用します');
                 
-                // Use fallback data
-                artworksData = FALLBACK_DATA.artworks;
-                metaData = FALLBACK_DATA.meta;
+                // フォールバックデータ使用
+                artworksData = SIMPLE_FALLBACK_DATA.artworks;
+                metaData = SIMPLE_FALLBACK_DATA.meta;
                 loadingState = 'fallback';
                 jsonSource = 'fallback';
                 
                 updateJsonStatus('fallback', `${artworksData.length}作品 (サンプル)`);
             }
             
-            // Always proceed to display
-            try {
-                displayMetaInfo();
-                await generateGallery(); // Wait for gallery generation
-                updateDebugInfo();
-            } catch (displayError) {
-                safeLog('表示エラー:', displayError.message);
-                showErrorState();
-            }
+            // 表示処理
+            displayMetaInfo();
+            generateGallery();
         }
         
+        // ===== メタ情報表示 =====
         function displayMetaInfo() {
-            try {
-                const metaPanel = document.getElementById('meta-info');
-                if (!metaPanel || !metaData) return;
+            const metaPanel = document.getElementById('meta-info');
+            if (!metaPanel) return;
+            
+            if (metaData && (metaData.version || metaData.description)) {
+                metaPanel.style.display = 'block';
                 
-                if (metaData.version || metaData.description || metaData.author) {
-                    metaPanel.style.display = 'block';
-                    
-                    const elements = {
-                        'meta-total': metaData.total || artworksData.length,
-                        'meta-version': metaData.version || '1.0',
-                        'meta-generated': metaData.generated ? 
-                            new Date(metaData.generated).toLocaleDateString('ja-JP') : '今日',
-                        'meta-description': metaData.description || 'ZEN Art Portfolio 作品集',
-                        'meta-author': metaData.author ? `by ${metaData.author}` : ''
-                    };
-                    
-                    Object.entries(elements).forEach(([id, value]) => {
-                        const el = document.getElementById(id);
-                        if (el) el.textContent = value;
-                    });
+                document.getElementById('meta-total').textContent = metaData.total || artworksData.length;
+                document.getElementById('meta-version').textContent = metaData.version || '1.0';
+                
+                if (metaData.generated) {
+                    const date = new Date(metaData.generated);
+                    document.getElementById('meta-generated').textContent = date.toLocaleDateString('ja-JP');
+                } else {
+                    document.getElementById('meta-generated').textContent = '今日';
                 }
-            } catch (e) {
-                safeLog('メタ情報表示エラー:', e.message);
+                
+                document.getElementById('meta-description').textContent = metaData.description || 'ZEN Art Portfolio 作品集';
+                document.getElementById('meta-author').textContent = metaData.author ? `by ${metaData.author}` : '';
             }
         }
         
-        async function generateGallery() {
-            return new Promise((resolve, reject) => {
-                try {
-                    const gallery = document.getElementById('gallery');
-                    if (!gallery) {
-                        safeLog('ギャラリー要素が見つかりません');
-                        reject(new Error('Gallery element not found'));
-                        return;
-                    }
-                    
-                    safeLog('🔥 緊急修正版ギャラリー生成開始');
-                    
-                    // Show loading first
-                    gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>作品を強制生成中...</span></div>';
-                    
-                    if (!artworksData || artworksData.length === 0) {
-                        reject(new Error('No artworks data'));
-                        return;
-                    }
-                    
-                    // Wait a bit then clear and generate
-                    setTimeout(() => {
-                        try {
-                            // Force clear gallery
-                            gallery.innerHTML = '';
-                            gallery.style.cssText = `
-                                display: grid !important;
-                                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
-                                gap: 2rem !important;
-                                width: 100% !important;
-                                overflow: visible !important;
-                                position: relative !important;
-                                z-index: 1 !important;
-                                border: 2px dashed rgba(212, 175, 55, 0.2) !important;
-                                padding: 1rem !important;
-                                min-height: 800px !important;
-                            `;
-                            
-                            // Sort artworks: featured first
-                            const sortedArtworks = [...artworksData].sort((a, b) => {
-                                if (a.featured && !b.featured) return -1;
-                                if (!a.featured && b.featured) return 1;
-                                return new Date(b.created || 0) - new Date(a.created || 0);
-                            });
-                            
-                            safeLog(`${sortedArtworks.length}件の作品を強制カード生成中`);
-                            
-                            // Create cards immediately
-                            sortedArtworks.forEach((work, index) => {
-                                try {
-                                    const card = createUltimateWorkCard(work, index);
-                                    gallery.appendChild(card);
-                                    safeLog(`✅ カード強制生成完了: ${work.title}`);
-                                } catch (cardError) {
-                                    safeLog(`❌ カード生成エラー: ${work.title}`, cardError.message);
-                                    // Create error card
-                                    const errorCard = createErrorCard(work, index);
-                                    gallery.appendChild(errorCard);
-                                }
-                            });
-                            
-                            // Force immediate visibility
-                            setTimeout(() => {
-                                forceShowAllCards();
-                                setupScrollAnimations();
-                                updateDebugInfo();
-                                safeLog(`🎉 緊急修正版ギャラリー生成完了: ${gallery.children.length}件表示中`);
-                                resolve();
-                            }, 100);
-                            
-                        } catch (genError) {
-                            safeLog('ギャラリー生成エラー:', genError.message);
-                            reject(genError);
-                        }
-                    }, 300);
-                    
-                } catch (error) {
-                    safeLog('ギャラリー生成エラー:', error.message);
-                    reject(error);
-                }
-            });
-        }
-        
-        function createUltimateWorkCard(work, index) {
-            try {
-                const card = document.createElement('div');
-                
-                // Force all styles with !important
-                card.className = `work-card ${work.featured ? 'featured' : ''}`;
-                card.style.cssText = `
-                    display: block !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                    position: relative !important;
-                    z-index: 2 !important;
-                    width: 100% !important;
-                    min-width: 320px !important;
-                    min-height: 500px !important;
-                    background: rgba(255, 255, 255, 0.95) !important;
-                    border-radius: 20px !important;
-                    padding: 1.5rem !important;
-                    border: 2px solid rgba(45, 45, 45, 0.1) !important;
-                    box-shadow: 0 4px 16px rgba(45, 45, 45, 0.08) !important;
-                    cursor: pointer !important;
-                    transition: all 0.5s ease !important;
-                    overflow: visible !important;
-                    transform: translateY(0) !important;
-                    margin-bottom: 1rem !important;
-                    outline: 1px solid rgba(212, 175, 55, 0.3) !important;
-                `;
-                
-                // Safe thumbnail URL
-                const thumbnailUrl = (work.media && work.media.thumbnail && work.media.thumbnail.url) 
-                    ? work.media.thumbnail.url 
-                    : `https://picsum.photos/600/400?random=${index + 10}`;
-                
-                const thumbnailAlt = (work.media && work.media.thumbnail && work.media.thumbnail.alt) 
-                    ? work.media.thumbnail.alt 
-                    : work.title;
-                
-                // Create card content with forced styles
-                card.innerHTML = `
-                    ${work.featured ? '<div class="featured-badge" style="position: absolute !important; top: 1rem !important; right: 1rem !important; background: #d4af37 !important; color: #2d2d2d !important; padding: 0.25rem 0.5rem !important; border-radius: 12px !important; font-size: 0.75rem !important; font-weight: 500 !important; z-index: 10 !important;">注目</div>' : ''}
-                    
-                    <div class="work-preview" style="
-                        width: 100% !important;
-                        height: 200px !important;
-                        background: #f8f8f0 !important;
-                        border-radius: 12px !important;
-                        margin-bottom: 1.5rem !important;
-                        position: relative !important;
-                        overflow: hidden !important;
-                        border: 1px solid rgba(45, 45, 45, 0.08) !important;
-                        z-index: 2 !important;
-                        display: flex !important;
-                        align-items: center !important;
-                        justify-content: center !important;
-                    ">
-                        <img 
-                            src="${thumbnailUrl}" 
-                            alt="${thumbnailAlt}"
-                            style="width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important;"
-                            loading="lazy"
-                            onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\"width: 100% !important; height: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #f8f8f0, #e8e8e8) !important; color: #6a6a6a !important; font-size: 1.125rem !important; font-weight: 300 !important; text-align: center !important; line-height: 1.4 !important; padding: 1rem !important;\\">${work.title}</div>'"
-                        >
-                    </div>
-                    
-                    <div class="work-content" style="position: relative !important; z-index: 2 !important; display: block !important; width: 100% !important;">
-                        <h3 class="work-title" style="font-size: 1.25rem !important; font-weight: 500 !important; margin-bottom: 0.5rem !important; color: #2d2d2d !important; display: block !important;">${work.title}</h3>
-                        
-                        ${work.subtitle ? `<p class="work-subtitle" style="font-size: 0.875rem !important; color: #d4af37 !important; margin-bottom: 1rem !important; font-weight: 400 !important; display: block !important;">${work.subtitle}</p>` : ''}
-                        
-                        <p class="work-description" style="color: #6a6a6a !important; font-size: 0.875rem !important; line-height: 1.618 !important; margin-bottom: 1.5rem !important; display: block !important;">${work.description}</p>
-                        
-                        <div class="work-actions" style="display: flex !important; gap: 0.5rem !important; margin-bottom: 1rem !important; width: 100% !important;">
-                            <button class="action-btn" onclick="copyPrompt('${work.id}')" style="
-                                flex: 1 !important;
-                                background: #2d2d2d !important;
-                                color: #f8f8f0 !important;
-                                border: none !important;
-                                padding: 0.5rem 1rem !important;
-                                border-radius: 8px !important;
-                                cursor: pointer !important;
-                                font-size: 0.75rem !important;
-                                font-weight: 500 !important;
-                                transition: all 0.3s ease !important;
-                                z-index: 5 !important;
-                            ">
-                                Prompt Copy
-                            </button>
-                            <button class="action-btn" onclick="copyCode('${work.id}')" style="
-                                flex: 1 !important;
-                                background: #2d2d2d !important;
-                                color: #f8f8f0 !important;
-                                border: none !important;
-                                padding: 0.5rem 1rem !important;
-                                border-radius: 8px !important;
-                                cursor: pointer !important;
-                                font-size: 0.75rem !important;
-                                font-weight: 500 !important;
-                                transition: all 0.3s ease !important;
-                                z-index: 5 !important;
-                            ">
-                                Code Copy
-                            </button>
-                        </div>
-                        
-                        <div class="work-tech" style="display: flex !important; flex-wrap: wrap !important; gap: 0.25rem !important; width: 100% !important;">
-                            ${(work.tech || []).map(tech => `<span style="
-                                background: rgba(212, 175, 55, 0.1) !important;
-                                color: #d4af37 !important;
-                                padding: 0.25rem 0.5rem !important;
-                                border-radius: 16px !important;
-                                font-size: 0.75rem !important;
-                                border: 1px solid rgba(212, 175, 55, 0.2) !important;
-                                font-weight: 400 !important;
-                                display: inline-block !important;
-                            ">${tech}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-                
-                // Safe click handler
-                card.addEventListener('click', (e) => {
-                    try {
-                        if (!e.target.classList.contains('action-btn') && e.target.tagName !== 'BUTTON') {
-                            openWorkModal(work);
-                        }
-                    } catch (clickError) {
-                        safeLog('カードクリックエラー:', clickError.message);
-                    }
-                });
-                
-                return card;
-                
-            } catch (error) {
-                safeLog('カード作成エラー:', error.message);
-                return createErrorCard(work, index);
+        // ===== ギャラリー生成 =====
+        function generateGallery() {
+            const gallery = document.getElementById('gallery');
+            if (!gallery) {
+                log('ギャラリー要素が見つかりません');
+                return;
             }
-        }
-        
-        function createErrorCard(work, index) {
-            const errorCard = document.createElement('div');
-            errorCard.className = 'work-card';
-            errorCard.style.cssText = `
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                width: 100% !important;
-                min-height: 300px !important;
-                background: rgba(255, 200, 200, 0.9) !important;
-                border: 2px solid rgba(255, 100, 100, 0.3) !important;
-                border-radius: 20px !important;
-                padding: 1.5rem !important;
-                text-align: center !important;
+            
+            log('ギャラリー生成開始');
+            
+            // ローディング表示
+            gallery.innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <span>作品を読み込み中...</span>
+                </div>
             `;
             
-            errorCard.innerHTML = `
-                <div style="color: #ff6464; font-size: 2rem; margin-bottom: 1rem;">⚠️</div>
-                <h3 style="color: #2d2d2d; margin-bottom: 0.5rem;">${work.title || 'Error'}</h3>
-                <p style="color: #6a6a6a; font-size: 0.875rem;">カードの読み込みでエラーが発生しました。</p>
-            `;
-            return errorCard;
-        }
-        
-        function forceShowAllCards() {
-            try {
-                const cards = document.querySelectorAll('.work-card');
-                safeLog(`強制表示開始: ${cards.length}件のカード`);
+            if (!artworksData || artworksData.length === 0) {
+                showErrorState();
+                return;
+            }
+            
+            // 少し待ってからカード生成
+            setTimeout(() => {
+                gallery.innerHTML = '';
                 
-                cards.forEach((card, index) => {
-                    // Force immediate visibility
-                    card.style.cssText += `
-                        display: block !important;
-                        visibility: visible !important;
-                        opacity: 1 !important;
-                        transform: translateY(0) !important;
-                    `;
-                    
-                    // Add visible class
-                    card.classList.add('visible');
-                    
-                    safeLog(`✅ カード ${index + 1} 強制表示完了`);
+                // 作品をソート（featured優先）
+                const sortedArtworks = [...artworksData].sort((a, b) => {
+                    if (a.featured && !b.featured) return -1;
+                    if (!a.featured && b.featured) return 1;
+                    return 0;
                 });
                 
-                safeLog(`🎉 全${cards.length}件のカード強制表示完了！`);
-            } catch (e) {
-                safeLog('カード強制表示エラー:', e.message);
-            }
+                totalImages = sortedArtworks.length;
+                imageLoadCount = 0;
+                
+                log(`${sortedArtworks.length}件の作品カードを生成中`);
+                
+                // カード生成
+                sortedArtworks.forEach((work, index) => {
+                    const card = createWorkCard(work, index);
+                    gallery.appendChild(card);
+                });
+                
+                log(`ギャラリー生成完了: ${gallery.children.length}件のカード`);
+                updateDebugPanel();
+                
+            }, 300);
         }
         
+        // ===== 作品カード作成 =====
+        function createWorkCard(work, index) {
+            const card = document.createElement('div');
+            card.className = `work-card ${work.featured ? 'featured' : ''}`;
+            
+            // サムネイルURL処理（自動置換を削除）
+            const thumbnailUrl = work.media?.thumbnail?.url || null;
+            const thumbnailAlt = work.media?.thumbnail?.alt || work.title;
+            
+            card.innerHTML = `
+                ${work.featured ? '<div class="featured-badge">注目</div>' : ''}
+                
+                <div class="work-preview">
+                    ${thumbnailUrl ? 
+                        `<img 
+                            src="${thumbnailUrl}" 
+                            alt="${thumbnailAlt}"
+                            class="work-thumbnail"
+                            onload="handleImageLoad()"
+                            onerror="handleImageError(this, '${work.title}')"
+                        >` :
+                        `<div class="work-placeholder">${work.title}</div>`
+                    }
+                </div>
+                
+                <div class="work-content">
+                    <h3 class="work-title">${work.title}</h3>
+                    ${work.subtitle ? `<p class="work-subtitle">${work.subtitle}</p>` : ''}
+                    <p class="work-description">${work.description}</p>
+                    
+                    <div class="work-actions">
+                        <button class="action-btn" onclick="copyPrompt('${work.id}')">
+                            Prompt Copy
+                        </button>
+                        <button class="action-btn" onclick="copyCode('${work.id}')">
+                            Code Copy
+                        </button>
+                    </div>
+                    
+                    <div class="work-tech">
+                        ${(work.tech || []).map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // 画像がない場合は即座にカウント
+            if (!thumbnailUrl) {
+                imageLoadCount++;
+                updateDebugPanel();
+            }
+            
+            return card;
+        }
+        
+        // ===== 画像読み込み処理 =====
+        function handleImageLoad() {
+            imageLoadCount++;
+            log(`画像読み込み完了: ${imageLoadCount}/${totalImages}`);
+            updateDebugPanel();
+        }
+        
+        function handleImageError(img, title) {
+            imageLoadCount++;
+            log(`画像読み込みエラー: ${title}`);
+            
+            // プレースホルダーに置換
+            img.parentNode.innerHTML = `<div class="work-placeholder">${title}</div>`;
+            updateDebugPanel();
+        }
+        
+        // ===== エラー状態表示 =====
         function showErrorState() {
-            try {
-                const gallery = document.getElementById('gallery');
-                if (gallery) {
-                    gallery.innerHTML = `
-                        <div class="error-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; color: #6a6a6a; text-align: center; padding: 2rem;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">⚠️</div>
-                            <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">作品の読み込みでエラーが発生しました</div>
-                            <div style="font-size: 0.875rem; color: #8a8a8a; max-width: 500px; margin-bottom: 1rem;">
-                                データの形式に問題があるか、ネットワークエラーが発生している可能性があります。
-                            </div>
-                            <button onclick="retryLoadData()" style="
-                                margin-top: 1rem; padding: 0.5rem 1.5rem; background: #2d2d2d; color: #f8f8f0;
-                                border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem;
-                                transition: all 0.3s ease;
-                            " onmouseover="this.style.background='#d4af37'; this.style.color='#2d2d2d'" onmouseout="this.style.background='#2d2d2d'; this.style.color='#f8f8f0'">
-                                再試行
-                            </button>
-                        </div>
-                    `;
-                }
-            } catch (e) {
-                safeLog('エラー状態表示エラー:', e.message);
-            }
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">⚠️</div>
+                    <h3>作品データの読み込みに失敗しました</h3>
+                    <p>artworks.jsonファイルが見つからないか、データ形式に問題があります。</p>
+                    <button class="retry-button" onclick="retryLoad()">再試行</button>
+                </div>
+            `;
         }
         
-        // ===== COPY FUNCTIONS =====
+        // ===== コピー機能 =====
         function copyPrompt(workId) {
-            try {
-                const work = artworksData.find(w => w.id === workId);
-                if (work && work.prompt) {
-                    const promptText = work.prompt.midjourney || work.prompt.description || 'プロンプトが見つかりません';
-                    copyTextToClipboard(promptText, `"${work.title}" のプロンプトをコピーしました`);
-                }
-            } catch (e) {
-                safeLog('プロンプトコピーエラー:', e.message);
+            const work = artworksData.find(w => w.id === workId);
+            if (work && work.prompt) {
+                const text = work.prompt.midjourney || work.prompt.description || 'プロンプトが見つかりません';
+                copyToClipboard(text, `"${work.title}" のプロンプトをコピーしました`);
             }
         }
         
         function copyCode(workId) {
-            try {
-                const work = artworksData.find(w => w.id === workId);
-                if (work && work.code) {
-                    const codeText = work.code.content || 'コードが見つかりません';
-                    copyTextToClipboard(codeText, `"${work.title}" のコードをコピーしました`);
-                }
-            } catch (e) {
-                safeLog('コードコピーエラー:', e.message);
+            const work = artworksData.find(w => w.id === workId);
+            if (work && work.code) {
+                const text = work.code.content || 'コードが見つかりません';
+                copyToClipboard(text, `"${work.title}" のコードをコピーしました`);
             }
         }
         
-        function copyTextToClipboard(text, successMessage = 'コピーしました ✅') {
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(text).then(() => {
-                        showSimpleNotification(successMessage);
-                    }).catch(err => {
-                        fallbackCopyTextToClipboard(text, successMessage);
-                    });
-                } else {
-                    fallbackCopyTextToClipboard(text, successMessage);
-                }
-            } catch (e) {
-                safeLog('クリップボードコピーエラー:', e.message);
-            }
-        }
-        
-        function fallbackCopyTextToClipboard(text, successMessage) {
-            try {
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                
+        function copyToClipboard(text, message) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification(message);
+            }).catch(() => {
+                // フォールバック
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
                 document.execCommand('copy');
-                showSimpleNotification(successMessage);
-                document.body.removeChild(textArea);
-            } catch (err) {
-                safeLog('フォールバックコピーエラー:', err.message);
-                showSimpleNotification('コピーに失敗しました ❌');
-            }
+                document.body.removeChild(textarea);
+                showNotification(message);
+            });
         }
         
-        function showSimpleNotification(message) {
-            try {
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 80px;
-                    right: 20px;
-                    background: rgba(45, 45, 45, 0.95);
-                    color: #f8f8f0;
-                    padding: 12px 20px;
-                    border-radius: 8px;
-                    z-index: 10001;
-                    font-size: 14px;
-                    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-                    opacity: 0;
-                    transform: translateX(100%);
-                    transition: all 0.4s ease;
-                `;
-                
-                notification.textContent = message;
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.opacity = '1';
-                    notification.style.transform = 'translateX(0)';
-                }, 100);
-                
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 400);
-                }, 2000);
-            } catch (e) {
-                safeLog('通知表示エラー:', e.message);
-            }
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; top: 80px; right: 20px; background: rgba(45, 45, 45, 0.95);
+                color: white; padding: 12px 20px; border-radius: 8px; z-index: 10001;
+                font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                opacity: 0; transform: translateX(100%); transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
         }
         
-        // ===== CLAUDE GENERATOR FUNCTIONS =====
+        // ===== ユーティリティ関数 =====
+        function retryLoad() {
+            log('再読み込み開始');
+            loadArtworksData();
+        }
+        
+        function showDetailedStatus() {
+            const details = [
+                `データソース: ${jsonSource}`,
+                `作品数: ${artworksData.length}`,
+                `読み込み状態: ${loadingState}`,
+                `カード表示数: ${document.querySelectorAll('.work-card').length}`,
+                `画像読み込み: ${imageLoadCount}/${totalImages}`
+            ];
+            
+            alert('システム状態:\n\n' + details.join('\n'));
+        }
+        
         function openClaudeGenerator() {
-            try {
-                const panel = document.getElementById('claudePanel');
-                panel.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            } catch (e) {
-                safeLog('Claude生成パネルオープンエラー:', e.message);
-            }
+            alert('Claude生成機能は次のバージョンで実装予定です。');
         }
         
-        function closeClaudeGenerator() {
-            try {
-                const panel = document.getElementById('claudePanel');
-                panel.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            } catch (e) {
-                safeLog('Claude生成パネルクローズエラー:', e.message);
-            }
-        }
-        
-        function copyClaudePrompt() {
-            try {
-                const promptText = document.getElementById('claudePrompt').value;
-                copyTextToClipboard(promptText, 'Claude生成プロンプトをコピーしました！');
-            } catch (e) {
-                safeLog('Claudeプロンプトコピーエラー:', e.message);
-            }
-        }
-        
-        // ===== JSON STATUS FUNCTIONS =====
-        function toggleJsonInfo() {
-            try {
-                safeLog('JSON状態クリック検知');
-                
-                const details = [
-                    `📂 データソース: ${jsonSource === 'json' ? 'artworks.json ✅' : 'フォールバックデータ ⚠️'}`,
-                    `🎨 作品数: ${artworksData.length}件`,
-                    `🔄 読み込み状態: ${loadingState}`,
-                    `📋 バージョン: ${metaData.version || 'N/A'}`,
-                    `👤 作成者: ${metaData.author || 'N/A'}`,
-                    `📊 表示カード数: ${document.querySelectorAll('.work-card').length}件`
-                ];
-                
-                showSimpleModal('📊 システム状態情報', details.join('<br>'));
-            } catch (e) {
-                safeLog('JSON状態表示エラー:', e.message);
-            }
-        }
-        
-        function showSimpleModal(title, content) {
-            try {
-                // Remove existing modal
-                const existingModal = document.getElementById('simpleModal');
-                if (existingModal) existingModal.remove();
-                
-                const modal = document.createElement('div');
-                modal.id = 'simpleModal';
-                modal.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: rgba(248, 248, 240, 0.98);
-                    backdrop-filter: blur(20px);
-                    border-radius: 16px;
-                    padding: 2rem;
-                    max-width: 90vw;
-                    width: 500px;
-                    box-shadow: 0 16px 64px rgba(45, 45, 45, 0.16);
-                    z-index: 10003;
-                    opacity: 0;
-                    transition: all 0.4s ease;
-                `;
-                
-                modal.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                        <h3 style="margin: 0; color: #2d2d2d; font-size: 1.25rem;">${title}</h3>
-                        <button onclick="closeSimpleModal()" style="
-                            background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #8a8a8a; padding: 0.5rem;
-                        ">×</button>
-                    </div>
-                    <div style="color: #2d2d2d; line-height: 1.6;">${content}</div>
-                    <div style="margin-top: 1.5rem; text-align: center;">
-                        <button onclick="retryLoadData(); closeSimpleModal();" style="
-                            background: #2d2d2d; color: #f8f8f0; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; margin-right: 0.5rem;
-                        ">🔄 再読み込み</button>
-                        <button onclick="debugMode = !debugMode; updateDebugInfo(); closeSimpleModal();" style="
-                            background: #d4af37; color: #2d2d2d; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;
-                        ">🔍 デバッグ切替</button>
-                    </div>
-                `;
-                
-                // Create overlay
-                const overlay = document.createElement('div');
-                overlay.id = 'simpleOverlay';
-                overlay.style.cssText = `
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background: rgba(45, 45, 45, 0.5); z-index: 10002; opacity: 0; transition: all 0.4s ease;
-                `;
-                overlay.onclick = () => closeSimpleModal();
-                
-                document.body.appendChild(overlay);
-                document.body.appendChild(modal);
-                
-                setTimeout(() => {
-                    overlay.style.opacity = '1';
-                    modal.style.opacity = '1';
-                }, 50);
-                
-            } catch (e) {
-                safeLog('モーダル表示エラー:', e.message);
-            }
-        }
-        
-        function closeSimpleModal() {
-            try {
-                const modal = document.getElementById('simpleModal');
-                const overlay = document.getElementById('simpleOverlay');
-                
-                if (modal) modal.style.opacity = '0';
-                if (overlay) overlay.style.opacity = '0';
-                
-                setTimeout(() => {
-                    if (modal && modal.parentNode) modal.parentNode.removeChild(modal);
-                    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
-                }, 400);
-            } catch (e) {
-                safeLog('モーダルクローズエラー:', e.message);
-            }
-        }
-        
-        // ===== RETRY FUNCTION =====
-        function retryLoadData() {
-            try {
-                const gallery = document.getElementById('gallery');
-                if (gallery) {
-                    gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>緊急再試行中...</span></div>';
-                }
-                updateJsonStatus('loading', '緊急再試行中...');
-                setTimeout(() => {
-                    loadArtworksData();
-                }, 500);
-            } catch (e) {
-                safeLog('データ再試行エラー:', e.message);
-            }
-        }
-        
-        // ===== MODAL FUNCTIONS =====
-        let currentModal = null;
-        
-        function openWorkModal(work) {
-            try {
-                const modal = document.getElementById('workModal');
-                const title = document.getElementById('modalTitle');
-                
-                if (modal && title) {
-                    title.textContent = work.title;
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                    currentModal = work;
-                    safeLog('モーダル表示:', work.title);
-                }
-            } catch (e) {
-                safeLog('ワークモーダルオープンエラー:', e.message);
-            }
-        }
-        
-        function closeWorkModal() {
-            try {
-                const modal = document.getElementById('workModal');
-                if (modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                    currentModal = null;
-                }
-            } catch (e) {
-                safeLog('ワークモーダルクローズエラー:', e.message);
-            }
-        }
-        
-        // ===== THREE.JS BACKGROUND (SAFE VERSION) =====
-        let scene, camera, renderer, particles;
-        let animationId;
-        
-        function initThreeJS() {
-            try {
-                const canvas = document.getElementById('zen-canvas');
-                if (!canvas || !window.THREE) {
-                    safeLog('Three.js または Canvas要素が見つかりません');
-                    return;
-                }
-                
-                scene = new THREE.Scene();
-                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                
-                createZenParticles();
-                camera.position.z = 10;
-                animate();
-                
-                safeLog('Three.js初期化完了');
-            } catch (e) {
-                safeLog('Three.js初期化エラー:', e.message);
-            }
-        }
-        
-        function createZenParticles() {
-            try {
-                const geometry = new THREE.BufferGeometry();
-                const particleCount = 60; // Reduced for performance
-                const positions = new Float32Array(particleCount * 3);
-                const velocities = new Float32Array(particleCount * 3);
-                
-                for (let i = 0; i < particleCount * 3; i += 3) {
-                    positions[i] = (Math.random() - 0.5) * 20;
-                    positions[i + 1] = (Math.random() - 0.5) * 20;
-                    positions[i + 2] = (Math.random() - 0.5) * 20;
-                    
-                    velocities[i] = (Math.random() - 0.5) * 0.003;
-                    velocities[i + 1] = (Math.random() - 0.5) * 0.003;
-                    velocities[i + 2] = (Math.random() - 0.5) * 0.003;
-                }
-                
-                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
-                
-                const material = new THREE.PointsMaterial({
-                    color: 0xd4af37,
-                    size: 0.008,
-                    transparent: true,
-                    opacity: 0.3,
-                    blending: THREE.AdditiveBlending
-                });
-                
-                particles = new THREE.Points(geometry, material);
-                scene.add(particles);
-            } catch (e) {
-                safeLog('パーティクル作成エラー:', e.message);
-            }
-        }
-        
-        function animate() {
-            try {
-                animationId = requestAnimationFrame(animate);
-                
-                if (particles) {
-                    const positions = particles.geometry.attributes.position.array;
-                    const velocities = particles.geometry.attributes.velocity.array;
-                    
-                    for (let i = 0; i < positions.length; i += 3) {
-                        positions[i] += velocities[i];
-                        positions[i + 1] += velocities[i + 1];
-                        positions[i + 2] += velocities[i + 2];
-                        
-                        if (Math.abs(positions[i]) > 10) velocities[i] *= -0.7;
-                        if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -0.7;
-                        if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -0.7;
-                    }
-                    
-                    particles.geometry.attributes.position.needsUpdate = true;
-                    particles.rotation.y += 0.0003;
-                }
-                
-                if (renderer && scene && camera) {
-                    renderer.render(scene, camera);
-                }
-            } catch (e) {
-                safeLog('アニメーションエラー:', e.message);
-                if (animationId) {
-                    cancelAnimationFrame(animationId);
-                }
-            }
-        }
-        
-        // ===== SCROLL ANIMATIONS =====
-        function setupScrollAnimations() {
-            try {
-                const observerOptions = {
-                    threshold: 0.05,
-                    rootMargin: '0px 0px -50px 0px'
-                };
-                
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                        }
-                    });
-                }, observerOptions);
-                
-                document.querySelectorAll('.section-title, .philosophy-text').forEach(el => {
-                    observer.observe(el);
-                });
-                
-                safeLog('スクロールアニメーション設定完了');
-            } catch (e) {
-                safeLog('スクロールアニメーション設定エラー:', e.message);
-            }
-        }
-        
-        // ===== NAVIGATION =====
-        function setupNavigation() {
-            try {
-                const navItems = document.querySelectorAll('.nav-item');
-                navItems.forEach(item => {
-                    item.addEventListener('click', (e) => {
-                        try {
-                            e.preventDefault();
-                            const targetId = item.getAttribute('href');
-                            const target = document.querySelector(targetId);
-                            if (target) {
-                                const offsetTop = target.offsetTop - 80;
-                                window.scrollTo({
-                                    top: offsetTop,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        } catch (navError) {
-                            safeLog('ナビゲーションクリックエラー:', navError.message);
-                        }
-                    });
-                });
-                
-                safeLog('ナビゲーション設定完了');
-            } catch (e) {
-                safeLog('ナビゲーション設定エラー:', e.message);
-            }
-        }
-        
-        // ===== EVENT LISTENERS =====
-        function setupEventListeners() {
-            try {
-                const closeBtn = document.getElementById('closeModal');
-                const modal = document.getElementById('workModal');
-                
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', closeWorkModal);
-                }
-                
-                if (modal) {
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) {
-                            closeWorkModal();
-                        }
-                    });
-                }
-                
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        if (currentModal) {
-                            closeWorkModal();
-                        } else if (document.getElementById('claudePanel').classList.contains('active')) {
-                            closeClaudeGenerator();
-                        } else if (document.getElementById('simpleModal')) {
-                            closeSimpleModal();
-                        }
-                    }
-                });
-                
-                window.addEventListener('resize', () => {
-                    if (camera && renderer) {
-                        camera.aspect = window.innerWidth / window.innerHeight;
-                        camera.updateProjectionMatrix();
-                        renderer.setSize(window.innerWidth, window.innerHeight);
-                    }
-                });
-                
-                safeLog('イベントリスナー設定完了');
-            } catch (e) {
-                safeLog('イベントリスナー設定エラー:', e.message);
-            }
-        }
-        
-        // ===== GLOBAL FUNCTIONS =====
-        window.toggleJsonInfo = toggleJsonInfo;
-        window.closeSimpleModal = closeSimpleModal;
-        window.openClaudeGenerator = openClaudeGenerator;
-        window.closeClaudeGenerator = closeClaudeGenerator;
-        window.copyClaudePrompt = copyClaudePrompt;
+        // ===== グローバル関数登録 =====
+        window.handleImageLoad = handleImageLoad;
+        window.handleImageError = handleImageError;
         window.copyPrompt = copyPrompt;
         window.copyCode = copyCode;
-        window.retryLoadData = retryLoadData;
+        window.retryLoad = retryLoad;
+        window.showDetailedStatus = showDetailedStatus;
+        window.openClaudeGenerator = openClaudeGenerator;
         
-        // ===== INITIALIZATION =====
+        // ===== 初期化 =====
         document.addEventListener('DOMContentLoaded', () => {
-            safeLog('🔥 ZEN Art Portfolio 緊急修正版: 初期化開始');
-            
-            try {
-                // Force show JSON status immediately
-                setTimeout(() => {
-                    const statusEl = document.getElementById('json-status');
-                    if (statusEl) {
-                        statusEl.style.cssText = `
-                            position: fixed !important;
-                            bottom: 20px !important;
-                            right: 20px !important;
-                            z-index: 9999 !important;
-                            display: block !important;
-                            visibility: visible !important;
-                            opacity: 1 !important;
-                            pointer-events: all !important;
-                        `;
-                        safeLog('JSON状態要素を強制表示');
-                    }
-                }, 200);
-                
-                // Initialize systems
-                loadArtworksData();
-                initThreeJS();
-                setupNavigation();
-                setupEventListeners();
-                
-                safeLog('🎉 緊急修正版初期化完了');
-                
-            } catch (initError) {
-                safeLog('初期化エラー:', initError.message);
-                setTimeout(() => {
-                    showErrorState();
-                }, 1000);
-            }
+            log('🎨 ZEN Portfolio シンプル確実版: 初期化開始');
+            updateDebugPanel();
+            loadArtworksData();
         });
         
-        // ===== CLEANUP =====
-        window.addEventListener('beforeunload', () => {
-            try {
-                if (animationId) {
-                    cancelAnimationFrame(animationId);
-                }
-                if (renderer) {
-                    renderer.dispose();
-                }
-            } catch (e) {
-                // Ignore cleanup errors
-            }
-        });
-        
-        // ===== DEVELOPMENT HELPERS =====
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            setTimeout(() => {
-                safeLog('開発モード: デバッグ情報');
-                safeLog('作品データ:', artworksData);
-                safeLog('メタデータ:', metaData);
-                safeLog('読み込み状態:', loadingState);
-                safeLog('JSONソース:', jsonSource);
-                debugMode = true;
-                updateDebugInfo();
-            }, 3000);
-        }
+        // ===== デバッグ更新タイマー =====
+        setInterval(updateDebugPanel, 1000);
     </script>
 </body>
 </html>
