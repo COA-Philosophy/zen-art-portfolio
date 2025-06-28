@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEN Art Portfolio - 禅的実験室</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ===== ZEN DESIGN SYSTEM ===== */
+        :root {
+            /* 和風色彩パレット */
+            --zen-void: #000000;          /* 虚無 */
+            --zen-sumi: #2d2d2d;          /* 墨色 */
+            --zen-charcoal: #4a4a4a;      /* 炭色 */
+            --zen-stone: #6a6a6a;         /* 石色 */
+            --zen-silver: #8a8a8a;        /* 銀色 */
+            --zen-mist: #b8b8b8;          /* 霧色 */
+            --zen-pearl: #e8e8e8;         /* 真珠色 */
+            --zen-washi: #f8f8f0;         /* 和紙色 */
+            --zen-pure: #ffffff;          /* 純白 */
+            --zen-gold: #d4af37;          /* 金色 */
+            --zen-copper: #b87333;        /* 銅色 */
+            --zen-accent: var(--zen-gold);
+            
+            /* 黄金比ベースの空間システム */
+            --golden-ratio: 1.618;
+            --space-xs: 0.25rem;
+            --space-sm: calc(var(--space-xs) * var(--golden-ratio));
+            --space-md: calc(var(--space-sm) * var(--golden-ratio));
+            --space-lg: calc(var(--space-md) * var(--golden-ratio));
+            --space-xl: calc(var(--space-lg) * var(--golden-ratio));
+            --space-2xl: calc(var(--space-xl) * var(--golden-ratio));
+            
+            /* イージング曲線 */
+            --ease-breathing: cubic-bezier(0.4, 0.0, 0.2, 1);
+            --ease-meditation: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --ease-zen: cubic-bezier(0.23, 1, 0.32, 1);
+            --ease-ink: cubic-bezier(0.645, 0.045, 0.355, 1);
+            
+            /* タイポグラフィスケール */
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+            
+            /* シャドウシステム */
+            --shadow-ink: 0 2px 8px rgba(45, 45, 45, 0.1);
+            --shadow-paper: 0 4px 16px rgba(45, 45, 45, 0.08);
+            --shadow-floating: 0 8px 32px rgba(45, 45, 45, 0.12);
+            --shadow-elevated: 0 16px 64px rgba(45, 45, 45, 0.16);
+        }
+        
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        ::selection {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--zen-sumi);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--zen-washi);
+            color: var(--zen-sumi);
+            line-height: var(--golden-ratio);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* ===== THREE.JS BACKGROUND ===== */
+        #zen-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.4;
+        }
+        
+        /* ===== LOADING STATE ===== */
+        .loading-state {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            color: var(--zen-stone);
+            font-size: var(--font-size-lg);
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--zen-pearl);
+            border-top: 3px solid var(--zen-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: var(--space-md);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ===== ERROR STATE ===== */
+        .error-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--zen-stone);
+            text-align: center;
+            padding: var(--space-lg);
+        }
+        
+        .error-icon {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-md);
+            opacity: 0.6;
+        }
+        
+        .error-message {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .error-details {
+            font-size: var(--font-size-sm);
+            color: var(--zen-silver);
+            max-width: 500px;
+            margin-bottom: var(--space-md);
+        }
+        
+        .retry-button {
+            margin-top: var(--space-lg);
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--zen-sumi);
+            color: var(--zen-washi);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: all 0.3s var(--ease-breathing);
+        }
+        
+        .retry-button:hover {
+            background: var(--zen-accent);
+            color: var(--zen-sumi);
+        }
+        
+        /* ===== JSON STATUS INDICATOR ===== */
+        .json-status {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 1001;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 8px;
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(45, 45, 45, 0.1);
+            transition: all 0.3s var(--ease-breathing);
+            cursor: pointer;
+        }
+        
+        .json-status.loaded {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--zen-accent);
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+        
+        .json-status.fallback {
+            background: rgba(138, 138, 138, 0.1);
+            color: var(--zen-silver);
+            border-color: rgba(138, 138, 138, 0.2);
+        }
+        
+        .json-status.error {
+            background: rgba(255, 100, 100, 0.1);
+            color: #ff6464;
+            border-color: rgba(255, 100, 100, 0.2);
+        }
+        
+        .json-status:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-floating);
+        }
+        
+        /* ===== CLAUDE GENERATOR PANEL ===== */
+        .claude-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(248, 248, 240, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: var(--space-xl);
+            max-width: 90vw;
+            max-height: 90vh;
+            width: 600px;
+            box-shadow: var(--shadow-elevated);
+            border: 1px solid rgba(45, 45, 45, 0.1);
+            z-index: 10002;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s var(--ease-meditation);
+            overflow-y: auto;
+        }
+        
+        .claude-panel.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .claude-panel h3 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--space-lg);
+            color: var(--zen-sumi);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        .claude-panel textarea {
+            width: 100%;
+            height: 300px;
+            padding: var(--space-md);
+            border: 1px solid rgba(45, 45, 45, 0.2);
+            border-radius: 8px;
+            background: var(--zen-pure);
+            color: var(--zen-sumi);
+            font-family: 'Inter', monospace;
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: var(--space-md);
+        }
+        
+        .claude-panel textarea:focus {
+            outline: none;
+            border-color: var(--zen-accent);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+        }
+        
+        .claude-panel-actions {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: flex-end;
+        }
+        
+        .claude-btn {
+            padding: var(--space-sm) var(--space-lg);
+            border: none;
+            border-radius: 8px;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-breathing);
+        }
+        
+        .claude-btn.primary {
+            background: var(--zen-sumi);
+            color: var(--zen-washi);
+        }
+        
+        .claude-btn.primary:hover {
+            background: var(--zen-accent);
+            color: var(--zen-sumi);
+        }
+        
+        .claude-btn.secondary {
+            background: transparent;
+            color: var(--zen-stone);
+            border: 1px solid rgba(45, 45, 45, 0.2);
+        }
+        
+        .claude-btn.secondary:hover {
+            background: rgba(45, 45, 45, 0.05);
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .nav-wrapper {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 1000;
+            display: flex;
+            gap: var(--space-md);
+        }
+        
+        .nav-container {
+            padding: var(--space-sm) var(--space-lg);
+            background: rgba(248, 248, 240, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            border: 1px solid rgba(45, 45, 45, 0.1);
+            box-shadow: var(--shadow-floating);
+            display: flex;
+            gap: var(--space-lg);
+            transition: all 0.4s var(--ease-zen);
+        }
+        
+        .nav-container:hover {
+            background: rgba(248, 248, 240, 0.98);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: var(--shadow-elevated);
+        }
+        
+        .nav-item {
+            color: var(--zen-charcoal);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: var(--font-size-sm);
+            transition: all 0.3s var(--ease-breathing);
+            position: relative;
+            padding: var(--space-xs) 0;
+        }
+        
+        .nav-item:hover {
+            color: var(--zen-accent);
+            transform: translateY(-1px);
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--zen-accent);
+            transition: all 0.3s var(--ease-meditation);
+            transform: translateX(-50%);
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        /* Claude Generator Button */
+        .claude-generator-btn {
+            background: var(--zen-sumi);
+            color: var(--zen-washi);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 20px;
+            border: none;
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-breathing);
+        }
+        
+        .claude-generator-btn:hover {
+            background: var(--zen-accent);
+            color: var(--zen-sumi);
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: var(--space-lg);
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.02), transparent 70%);
+        }
+        
+        .hero-title {
+            font-size: clamp(var(--font-size-4xl), 8vw, var(--font-size-6xl));
+            font-weight: 300;
+            margin-bottom: var(--space-md);
+            opacity: 0;
+            animation: breatheIn 2s var(--ease-meditation) 0.5s forwards;
+            letter-spacing: 0.02em;
+            color: var(--zen-sumi);
+            position: relative;
+        }
+        
+        .hero-title::after {
+            content: '';
+            position: absolute;
+            bottom: -var(--space-sm);
+            left: 50%;
+            width: 60px;
+            height: 1px;
+            background: var(--zen-accent);
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: breatheIn 2s var(--ease-meditation) 1.5s forwards;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(var(--font-size-lg), 3vw, var(--font-size-2xl));
+            font-weight: 300;
+            color: var(--zen-stone);
+            opacity: 0;
+            animation: breatheIn 2s var(--ease-meditation) 1s forwards;
+            margin-bottom: var(--space-2xl);
+            max-width: 600px;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: var(--space-2xl);
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: breatheIn 2s var(--ease-meditation) 2s forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .scroll-line {
+            width: 1px;
+            height: calc(var(--space-xl) * 2);
+            background: linear-gradient(to bottom, transparent, var(--zen-accent), transparent);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .scroll-text {
+            font-size: var(--font-size-xs);
+            color: var(--zen-silver);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* ===== WORKS SECTION ===== */
+        .works-section {
+            padding: calc(var(--space-2xl) * 2) var(--space-lg);
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: calc(var(--space-xl) * 2);
+            color: var(--zen-sumi);
+            opacity: 0;
+            transform: translateY(2rem);
+            transition: all 1s var(--ease-meditation);
+            position: relative;
+        }
+        
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 20%;
+            width: 80px;
+            height: 1px;
+            background: var(--zen-accent);
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 20%;
+            width: 80px;
+            height: 1px;
+            background: var(--zen-accent);
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+        
+        /* ===== META INFO PANEL ===== */
+        .meta-info {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            border: 1px solid rgba(45, 45, 45, 0.05);
+            text-align: center;
+        }
+        
+        .meta-info h3 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--space-sm);
+            color: var(--zen-sumi);
+        }
+        
+        .meta-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-md);
+        }
+        
+        .meta-stat {
+            text-align: center;
+        }
+        
+        .meta-stat-value {
+            font-size: var(--font-size-xl);
+            font-weight: 500;
+            color: var(--zen-accent);
+        }
+        
+        .meta-stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--zen-stone);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .meta-description {
+            color: var(--zen-stone);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .meta-author {
+            color: var(--zen-accent);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+        
+        /* ===== WORKS GRID ===== */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: calc(var(--space-xl) * 3);
+        }
+        
+        .work-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: var(--space-lg);
+            border: 1px solid rgba(45, 45, 45, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s var(--ease-zen);
+            opacity: 0;
+            transform: translateY(3rem);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-paper);
+        }
+        
+        .work-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
+            transition: left 0.8s var(--ease-meditation);
+            z-index: 1;
+        }
+        
+        .work-card:hover::before {
+            left: 100%;
+        }
+        
+        .work-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .work-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(212, 175, 55, 0.2);
+            box-shadow: var(--shadow-elevated);
+            background: rgba(255, 255, 255, 0.98);
+        }
+        
+        .work-card.featured {
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            background: var(--zen-accent);
+            color: var(--zen-sumi);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 12px;
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            z-index: 2;
+        }
+        
+        /* ===== WORK PREVIEW ===== */
+        .work-preview {
+            width: 100%;
+            height: 240px;
+            background: var(--zen-washi);
+            border-radius: 12px;
+            margin-bottom: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(45, 45, 45, 0.08);
+            z-index: 2;
+        }
+        
+        .work-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: all 0.3s var(--ease-breathing);
+        }
+        
+        .work-thumbnail:hover {
+            transform: scale(1.02);
+        }
+        
+        /* ===== WORK CARD CONTENT ===== */
+        .work-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .work-title {
+            font-size: var(--font-size-xl);
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+            color: var(--zen-sumi);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        .work-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--zen-accent);
+            margin-bottom: var(--space-md);
+            font-weight: 400;
+        }
+        
+        .work-description {
+            color: var(--zen-stone);
+            font-size: var(--font-size-sm);
+            line-height: var(--golden-ratio);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .work-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        
+        .action-btn {
+            flex: 1;
+            background: var(--zen-sumi);
+            color: var(--zen-washi);
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            transition: all 0.3s var(--ease-breathing);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--zen-accent);
+            transition: left 0.3s var(--ease-breathing);
+            z-index: -1;
+        }
+        
+        .action-btn:hover::before {
+            left: 0;
+        }
+        
+        .action-btn:hover {
+            color: var(--zen-sumi);
+            transform: translateY(-1px);
+        }
+        
+        .work-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+        
+        .tech-tag {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--zen-accent);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 16px;
+            font-size: var(--font-size-xs);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            font-weight: 400;
+        }
+        
+        /* ===== MODAL SYSTEM ===== */
+        .work-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 45, 45, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s var(--ease-meditation);
+        }
+        
+        .work-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-header {
+            padding: var(--space-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(232, 232, 232, 0.1);
+            background: rgba(248, 248, 240, 0.05);
+        }
+        
+        .modal-title {
+            color: var(--zen-washi);
+            font-size: var(--font-size-2xl);
+            font-weight: 300;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        .close-btn {
+            background: rgba(248, 248, 240, 0.1);
+            border: 1px solid rgba(248, 248, 240, 0.2);
+            color: var(--zen-washi);
+            font-size: var(--font-size-2xl);
+            cursor: pointer;
+            padding: var(--space-sm);
+            transition: all 0.3s var(--ease-breathing);
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            background: var(--zen-accent);
+            color: var(--zen-sumi);
+            transform: rotate(90deg);
+        }
+        
+        .modal-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: var(--zen-washi);
+        }
+        
+        .work-canvas {
+            width: 100%;
+            height: 100%;
+            background: var(--zen-washi);
+            display: block;
+        }
+        
+        /* ===== PHILOSOPHY SECTION ===== */
+        .philosophy-section {
+            padding: calc(var(--space-2xl) * 2) var(--space-lg);
+            background: linear-gradient(135deg, rgba(45, 45, 45, 0.02), rgba(212, 175, 55, 0.02));
+            text-align: center;
+            position: relative;
+        }
+        
+        .philosophy-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--zen-accent), transparent);
+            opacity: 0.3;
+        }
+        
+        .philosophy-text {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: var(--font-size-lg);
+            line-height: calc(var(--golden-ratio) * 1.2);
+            color: var(--zen-stone);
+            opacity: 0;
+            transform: translateY(2rem);
+            transition: all 1s var(--ease-meditation);
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        .philosophy-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* ===== FOOTER ===== */
+        footer {
+            padding: calc(var(--space-xl) * 2) var(--space-lg) var(--space-lg);
+            text-align: center;
+            border-top: 1px solid rgba(45, 45, 45, 0.1);
+            background: rgba(248, 248, 240, 0.5);
+        }
+        
+        .footer-content {
+            color: var(--zen-silver);
+            font-size: var(--font-size-sm);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* ===== ANIMATIONS ===== */
+        @keyframes breatheIn {
+            from {
+                opacity: 0;
+                transform: translateY(2rem);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 0.4; 
+                transform: scaleY(1);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scaleY(1.2);
+            }
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .claude-panel {
+                width: 95vw;
+                padding: var(--space-lg);
+            }
+            
+            .nav-wrapper {
+                top: var(--space-md);
+                right: var(--space-md);
+                left: var(--space-md);
+            }
+            
+            .nav-container {
+                justify-content: center;
+                gap: var(--space-md);
+                padding: var(--space-sm) var(--space-md);
+                flex-wrap: wrap;
+            }
+            
+            .works-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
+            
+            .work-card {
+                padding: var(--space-md);
+            }
+            
+            .work-preview {
+                height: 200px;
+            }
+            
+            .meta-stats {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            
+            .json-status {
+                bottom: var(--space-md);
+                right: var(--space-md);
+                font-size: 10px;
+                padding: var(--space-xs) var(--space-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Background Canvas -->
+    <canvas id="zen-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <div class="nav-wrapper">
+        <nav class="nav-container">
+            <a href="#works" class="nav-item">作品</a>
+            <a href="#philosophy" class="nav-item">哲学</a>
+            <a href="#contact" class="nav-item">結縁</a>
+            <button class="claude-generator-btn" onclick="openClaudeGenerator()">
+                🤖 Claude生成
+            </button>
+        </nav>
+    </div>
+    
+    <!-- JSON Status Indicator -->
+    <div id="json-status" class="json-status" onclick="toggleJsonInfo()">
+        <span id="json-status-text">読み込み中...</span>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">ZEN Art Portfolio</h1>
+        <p class="hero-subtitle">技術と瞑想の交差点で生まれる美的実験</p>
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            <span class="scroll-text">scroll</span>
+        </div>
+    </section>
+    
+    <!-- Works Section -->
+    <section id="works" class="works-section">
+        <h2 class="section-title">禅的技術実験</h2>
+        
+        <!-- Meta Info Panel -->
+        <div id="meta-info" class="meta-info" style="display: none;">
+            <h3>コレクション情報</h3>
+            <div class="meta-stats">
+                <div class="meta-stat">
+                    <div class="meta-stat-value" id="meta-total">-</div>
+                    <div class="meta-stat-label">作品数</div>
+                </div>
+                <div class="meta-stat">
+                    <div class="meta-stat-value" id="meta-version">-</div>
+                    <div class="meta-stat-label">バージョン</div>
+                </div>
+                <div class="meta-stat">
+                    <div class="meta-stat-value" id="meta-generated">-</div>
+                    <div class="meta-stat-label">更新日</div>
+                </div>
+            </div>
+            <div class="meta-description" id="meta-description">-</div>
+            <div class="meta-author" id="meta-author">-</div>
+        </div>
+        
+        <div id="gallery" class="works-grid">
+            <!-- 作品カードはここに動的生成される -->
+        </div>
+    </section>
+    
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="philosophy-section">
+        <h2 class="section-title">哲学</h2>
+        <div class="philosophy-text">
+            墨が和紙に滲む瞬間の美。雨が斜めに降る浮世絵の詩情。<br>
+            桜が舞い散る一瞬の無常観。月光が水面に映る静寂。<br><br>
+            
+            古来より日本人が愛でてきた自然の美を、現代のデジタル技術で再現する。<br>
+            WebGL、Three.js、Canvas API——最新の技術を使って、<br>
+            千年変わらない美の本質を表現する実験。<br><br>
+            
+            これは技術者としての修行であり、美的探求の記録である。
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <p>© 2025 ZEN Art Portfolio - 継続的な美的探求の記録</p>
+            <p style="margin-top: var(--space-sm); font-size: var(--font-size-sm); color: var(--zen-silver);">
+                Created By <span style="color: var(--zen-accent); font-weight: 500;">Tatsya Minegishi</span>
+            </p>
+            <p style="margin-top: var(--space-xs); font-size: var(--font-size-sm); color: var(--zen-stone);">
+                連絡先: <span style="color: var(--zen-accent);">@THE.STILL.BECOMING</span>
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Work Modal -->
+    <div id="workModal" class="work-modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">作品タイトル</h3>
+            <button class="close-btn" id="closeModal">×</button>
+        </div>
+        <div class="modal-content">
+            <canvas class="work-canvas" id="workCanvas"></canvas>
+        </div>
+    </div>
+    
+    <!-- Claude Generator Panel -->
+    <div id="claudePanel" class="claude-panel">
+        <h3>🤖 Claude作品生成システム</h3>
+        <p style="margin-bottom: var(--space-lg); color: var(--zen-stone); font-size: var(--font-size-sm);">
+            以下のプロンプトをClaudeに送信して、新しい作品データを生成してください。
+        </p>
+        <textarea id="claudePrompt" readonly>以下のJSON形式で、禅的アート作品を6個生成してください：
+
+{
+  "meta": {
+    "version": "1.0",
+    "total": 6,
+    "generated": "2025-01-28T12:00:00Z",
+    "description": "ZEN Art Portfolio 作品集 - 禅的美学とデジタル技術の融合",
+    "author": "Tatsya Minegishi",
+    "contact": "@THE.STILL.BECOMING"
+  },
+  "categories": {
+    "zen": "禅的作品",
+    "technical": "技術実験",
+    "interactive": "インタラクティブ",
+    "generative": "ジェネラティブ"
+  },
+  "artworks": [
+    {
+      "id": "unique-work-id",
+      "title": "作品タイトル",
+      "subtitle": "作品副題",
+      "description": "作品の説明文（120文字程度）",
+      "media": {
+        "thumbnail": {
+          "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Work+Title",
+          "alt": "作品タイトル"
+        },
+        "animation": {
+          "type": "mandala",
+          "desktop_only": true
+        }
+      },
+      "prompt": {
+        "midjourney": "実際に使えるMidjourneyプロンプト（--ar 16:9含む）",
+        "description": "プロンプトの詳細説明"
+      },
+      "code": {
+        "language": "javascript",
+        "content": "実際に動作するコード例（改行は\\nで表現）"
+      },
+      "tech": ["Three.js", "WebGL", "Canvas"],
+      "category": "zen",
+      "featured": true,
+      "created": "2025-01-28",
+      "tags": ["meditation", "geometry", "interactive"]
+    }
+  ]
+}
+
+要求事項：
+- テーマ：禅、自然、日本美学、瞑想、デジタルアート
+- 技術：Three.js, Canvas, WebGL, SVG, GLSL, CSS Animation
+- 各作品は独自の特徴と美的価値を持つこと
+- プロンプトは実際にMidjourneyで使用可能であること
+- コードは学習・参考用として価値があること
+- プレースホルダー画像のテキストは英語で設定
+- animationタイプ：mandala, zen-garden, ink, breathing, sakura, moonlight等
+
+完全なJSONのみを出力してください。</textarea>
+        <div class="claude-panel-actions">
+            <button class="claude-btn secondary" onclick="closeClaudeGenerator()">閉じる</button>
+            <button class="claude-btn primary" onclick="copyClaudePrompt()">プロンプトをコピー</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== ZEN ART PORTFOLIO SYSTEM (STEP 2: ENHANCED JSON MANAGEMENT) =====
+        
+        // ===== GLOBAL VARIABLES =====
+        let artworksData = [];
+        let metaData = {};
+        let loadingState = 'loading'; // loading, loaded, fallback, error
+        let jsonSource = 'unknown'; // json, fallback
+        
+        // ===== JSON VALIDATION SCHEMA =====
+        const JSON_SCHEMA = {
+            required: ['artworks'],
+            artworks: {
+                required: ['id', 'title', 'description'],
+                optional: ['subtitle', 'media', 'prompt', 'code', 'tech', 'category', 'featured', 'created', 'tags']
+            },
+            meta: {
+                optional: ['version', 'total', 'generated', 'description', 'author', 'contact']
+            }
+        };
+        
+        // ===== ENHANCED FALLBACK DATA =====
+        const FALLBACK_DATA = {
+            "meta": {
+                "version": "1.0-fallback",
+                "total": 3,
+                "generated": new Date().toISOString(),
+                "description": "フォールバックサンプルデータ - artworks.jsonを作成してください",
+                "author": "Tatsya Minegishi",
+                "contact": "@THE.STILL.BECOMING"
+            },
+            "artworks": [
+                {
+                    "id": "zen-mandala-sample",
+                    "title": "Zen Mandala",
+                    "subtitle": "幾何学的調和",
+                    "description": "Three.jsとWebGLシェーダーを用いた動的曼荼羅の生成。数学的美と禅的瞑想の融合を探求。",
+                    "media": {
+                        "thumbnail": {
+                            "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Zen+Mandala",
+                            "alt": "Zen Mandala"
+                        },
+                        "animation": {
+                            "type": "mandala",
+                            "desktop_only": true
+                        }
+                    },
+                    "prompt": {
+                        "midjourney": "zen mandala with intricate geometric patterns, golden ratio proportions, soft earth tones and gold accents, symmetrical design, peaceful meditative atmosphere, --ar 16:9 --style minimalist",
+                        "description": "幾何学的で瞑想的な曼荼羅を生成するプロンプト"
+                    },
+                    "code": {
+                        "language": "javascript",
+                        "content": "// Mandala generation with Three.js\nconst geometry = new THREE.RingGeometry(1, 100, 8, 8);\nconst material = new THREE.MeshBasicMaterial({color: 0xd4af37});\nconst mandala = new THREE.Mesh(geometry, material);"
+                    },
+                    "tech": ["Three.js", "GLSL", "WebGL"],
+                    "category": "zen",
+                    "featured": true,
+                    "created": "2025-01-28",
+                    "tags": ["meditation", "geometry", "interactive"]
+                },
+                {
+                    "id": "digital-zen-garden-sample",
+                    "title": "Digital Zen Garden", 
+                    "subtitle": "デジタル枯山水",
+                    "description": "パーティクルシステムとノイズ関数を用いた、インタラクティブな砂庭のシミュレーション。",
+                    "media": {
+                        "thumbnail": {
+                            "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Digital+Zen+Garden",
+                            "alt": "Digital Zen Garden"
+                        },
+                        "animation": {
+                            "type": "zen-garden",
+                            "desktop_only": true
+                        }
+                    },
+                    "prompt": {
+                        "midjourney": "digital zen garden with raked sand patterns, minimalist stone arrangement, subtle lighting, serene atmosphere, --ar 16:9 --style zen",
+                        "description": "デジタル技術で再現された枯山水庭園"
+                    },
+                    "code": {
+                        "language": "javascript",
+                        "content": "// Zen garden particle system\nclass ZenGarden {\n  constructor() {\n    this.particles = [];\n    this.initParticles();\n  }\n}"
+                    },
+                    "tech": ["Canvas 2D", "Particle System", "Perlin Noise"],
+                    "category": "zen",
+                    "featured": false,
+                    "created": "2025-01-28",
+                    "tags": ["zen-garden", "particles", "interactive"]
+                },
+                {
+                    "id": "ink-meditation-sample",
+                    "title": "Ink Meditation",
+                    "subtitle": "墨絵の瞑想",
+                    "description": "墨が和紙に滲む瞬間の美的表現。書道の精神性をデジタルで再現した作品。",
+                    "media": {
+                        "thumbnail": {
+                            "url": "https://placehold.co/600x400/f8f8f0/2d2d2d?text=Ink+Meditation",
+                            "alt": "Ink Meditation"
+                        },
+                        "animation": {
+                            "type": "ink",
+                            "desktop_only": true
+                        }
+                    },
+                    "prompt": {
+                        "midjourney": "traditional japanese ink painting style, flowing black ink on white paper, organic forms, minimalist composition, --ar 16:9 --style traditional",
+                        "description": "伝統的な墨絵の美学をデジタルで表現"
+                    },
+                    "code": {
+                        "language": "javascript",
+                        "content": "// Ink bleeding simulation\nfunction simulateInk(x, y) {\n  const flow = noise(x, y, time);\n  return flow;\n}"
+                    },
+                    "tech": ["Canvas 2D", "Fluid Dynamics", "Traditional Art"],
+                    "category": "zen",
+                    "featured": false,
+                    "created": "2025-01-28",
+                    "tags": ["ink", "calligraphy", "traditional"]
+                }
+            ]
+        };
+        
+        // ===== JSON VALIDATION FUNCTIONS =====
+        function validateArtworkData(data) {
+            const errors = [];
+            
+            if (!data || typeof data !== 'object') {
+                return ['Invalid JSON structure'];
+            }
+            
+            if (!data.artworks || !Array.isArray(data.artworks)) {
+                errors.push('Missing or invalid artworks array');
+            } else {
+                data.artworks.forEach((artwork, index) => {
+                    JSON_SCHEMA.artworks.required.forEach(field => {
+                        if (!artwork[field]) {
+                            errors.push(`Artwork ${index + 1}: Missing required field '${field}'`);
+                        }
+                    });
+                });
+            }
+            
+            return errors;
+        }
+        
+        function sanitizeArtworkData(data) {
+            if (!data.artworks) return data;
+            
+            data.artworks = data.artworks.map(artwork => {
+                // Ensure required fields have defaults
+                return {
+                    id: artwork.id || `artwork-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    title: artwork.title || 'Untitled Work',
+                    subtitle: artwork.subtitle || '',
+                    description: artwork.description || 'No description available',
+                    media: artwork.media || {
+                        thumbnail: {
+                            url: `https://placehold.co/600x400/f8f8f0/2d2d2d?text=${encodeURIComponent(artwork.title || 'Untitled')}`,
+                            alt: artwork.title || 'Untitled Work'
+                        }
+                    },
+                    prompt: artwork.prompt || { midjourney: 'No prompt available', description: '' },
+                    code: artwork.code || { language: 'javascript', content: '// No code available' },
+                    tech: artwork.tech || [],
+                    category: artwork.category || 'general',
+                    featured: artwork.featured || false,
+                    created: artwork.created || new Date().toISOString().split('T')[0],
+                    tags: artwork.tags || []
+                };
+            });
+            
+            return data;
+        }
+        
+        // ===== ENHANCED JSON LOADING =====
+        async function loadArtworksData() {
+            console.log('🎨 ZEN Portfolio Step 2: 高度なJSON読み込み開始');
+            updateJsonStatus('loading', 'データ読み込み中...');
+            
+            try {
+                // Multiple file attempt strategy
+                const possibleFiles = ['artworks.json', 'data/artworks.json', './artworks.json'];
+                let data = null;
+                let loadedFrom = null;
+                
+                for (const file of possibleFiles) {
+                    try {
+                        console.log(`📂 ファイル試行: ${file}`);
+                        const response = await fetch(file);
+                        
+                        if (response.ok) {
+                            const jsonText = await response.text();
+                            data = JSON.parse(jsonText);
+                            loadedFrom = file;
+                            break;
+                        }
+                    } catch (err) {
+                        console.log(`❌ ${file} 読み込み失敗:`, err.message);
+                        continue;
+                    }
+                }
+                
+                if (!data) {
+                    throw new Error('No artworks.json file found in any location');
+                }
+                
+                // Validate JSON data
+                const validationErrors = validateArtworkData(data);
+                if (validationErrors.length > 0) {
+                    console.warn('⚠️ JSON検証エラー:', validationErrors);
+                    showValidationWarnings(validationErrors);
+                }
+                
+                // Sanitize and prepare data
+                data = sanitizeArtworkData(data);
+                artworksData = data.artworks;
+                metaData = data.meta || {};
+                loadingState = 'loaded';
+                jsonSource = 'json';
+                
+                console.log(`✅ JSON読み込み成功: ${artworksData.length}件の作品`);
+                console.log(`📄 読み込み元: ${loadedFrom}`);
+                console.log('📊 メタデータ:', metaData);
+                
+                updateJsonStatus('loaded', `${artworksData.length}作品 (JSON)`);
+                displayMetaInfo();
+                generateGallery();
+                
+            } catch (error) {
+                console.warn('⚠️ JSON読み込み失敗:', error.message);
+                console.log('🔄 フォールバックデータを使用');
+                
+                // Use fallback data
+                artworksData = FALLBACK_DATA.artworks;
+                metaData = FALLBACK_DATA.meta;
+                loadingState = 'fallback';
+                jsonSource = 'fallback';
+                
+                updateJsonStatus('fallback', `${artworksData.length}作品 (サンプル)`);
+                showFallbackNotification();
+                displayMetaInfo();
+                generateGallery();
+            }
+        }
+        
+        // ===== STATUS AND NOTIFICATION FUNCTIONS =====
+        function updateJsonStatus(status, text) {
+            const statusEl = document.getElementById('json-status');
+            const textEl = document.getElementById('json-status-text');
+            
+            if (statusEl && textEl) {
+                statusEl.className = `json-status ${status}`;
+                textEl.textContent = text;
+            }
+        }
+        
+        function showValidationWarnings(errors) {
+            const notification = createNotification('warning', 'JSON検証警告', errors.join('<br>'), 8000);
+            document.body.appendChild(notification);
+        }
+        
+        function showFallbackNotification() {
+            const notification = createNotification(
+                'info', 
+                'サンプルデータで動作中',
+                'artworks.json が見つかりません。<br>Claude生成ボタンでデータを作成できます。',
+                6000
+            );
+            document.body.appendChild(notification);
+        }
+        
+        function createNotification(type, title, message, duration = 4000) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: ${type === 'warning' ? 'rgba(255, 193, 7, 0.95)' : 'rgba(45, 45, 45, 0.95)'};
+                color: ${type === 'warning' ? '#000' : '#f8f8f0'};
+                padding: 16px 20px;
+                border-radius: 12px;
+                z-index: 10001;
+                max-width: 350px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                border-left: 4px solid ${type === 'warning' ? '#ffc107' : '#d4af37'};
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-weight: 500; margin-bottom: 6px;">${title}</div>
+                <div style="font-size: 13px; opacity: 0.9; line-height: 1.4;">${message}</div>
+                <button onclick="this.parentNode.remove()" style="
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    background: none;
+                    border: none;
+                    color: inherit;
+                    cursor: pointer;
+                    font-size: 18px;
+                    padding: 4px;
+                    opacity: 0.7;
+                ">×</button>
+            `;
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 400);
+                }
+            }, duration);
+            
+            return notification;
+        }
+        
+        // ===== META INFO DISPLAY =====
+        function displayMetaInfo() {
+            const metaPanel = document.getElementById('meta-info');
+            if (!metaPanel || !metaData) return;
+            
+            // Show meta panel if we have meaningful meta data
+            if (metaData.version || metaData.description || metaData.author) {
+                metaPanel.style.display = 'block';
+                
+                // Update meta information
+                document.getElementById('meta-total').textContent = metaData.total || artworksData.length;
+                document.getElementById('meta-version').textContent = metaData.version || '1.0';
+                
+                if (metaData.generated) {
+                    const date = new Date(metaData.generated);
+                    document.getElementById('meta-generated').textContent = date.toLocaleDateString('ja-JP');
+                } else {
+                    document.getElementById('meta-generated').textContent = '今日';
+                }
+                
+                document.getElementById('meta-description').textContent = metaData.description || 'ZEN Art Portfolio 作品集';
+                document.getElementById('meta-author').textContent = metaData.author ? `by ${metaData.author}` : '';
+            }
+        }
+        
+        // ===== CLAUDE GENERATOR FUNCTIONS =====
+        function openClaudeGenerator() {
+            const panel = document.getElementById('claudePanel');
+            panel.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeClaudeGenerator() {
+            const panel = document.getElementById('claudePanel');
+            panel.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function copyClaudePrompt() {
+            const promptText = document.getElementById('claudePrompt').value;
+            copyText(promptText, 'Claude生成プロンプトをコピーしました！\n\n次のステップ:\n1. 新しいClaude会話でプロンプトを送信\n2. 生成されたJSONをコピー\n3. artworks.jsonファイルにペースト\n4. ページをリロード');
+        }
+        
+        // ===== JSON STATUS TOGGLE =====
+        function toggleJsonInfo() {
+            const details = [
+                `データソース: ${jsonSource === 'json' ? 'artworks.json' : 'フォールバック'}`,
+                `作品数: ${artworksData.length}`,
+                `読み込み状態: ${loadingState}`,
+                `バージョン: ${metaData.version || 'N/A'}`,
+                `最終更新: ${metaData.generated ? new Date(metaData.generated).toLocaleString('ja-JP') : 'N/A'}`
+            ];
+            
+            const notification = createNotification('info', 'JSON状態情報', details.join('<br>'), 5000);
+            document.body.appendChild(notification);
+        }
+        
+        // ===== ENHANCED GALLERY GENERATION =====
+        function generateGallery() {
+            const gallery = document.getElementById('gallery');
+            if (!gallery || !artworksData.length) return;
+            
+            console.log('🎨 高度なギャラリー生成開始');
+            showLoadingState();
+            
+            // Clear gallery
+            gallery.innerHTML = '';
+            
+            // Sort artworks: featured first, then by creation date
+            const sortedArtworks = [...artworksData].sort((a, b) => {
+                if (a.featured && !b.featured) return -1;
+                if (!a.featured && b.featured) return 1;
+                return new Date(b.created || 0) - new Date(a.created || 0);
+            });
+            
+            sortedArtworks.forEach((work, index) => {
+                const card = createEnhancedWorkCard(work, index);
+                gallery.appendChild(card);
+            });
+            
+            // Setup scroll animations with enhanced timing
+            setTimeout(() => {
+                setupScrollAnimations();
+            }, 100);
+            
+            console.log(`✅ 高度なギャラリー生成完了: ${sortedArtworks.length}件`);
+        }
+        
+        // ===== ENHANCED WORK CARD CREATION =====
+        function createEnhancedWorkCard(work, index) {
+            const card = document.createElement('div');
+            card.className = `work-card ${work.featured ? 'featured' : ''}`;
+            card.style.transitionDelay = `${index * 0.1}s`;
+            
+            // Enhanced thumbnail handling
+            const thumbnailUrl = work.media?.thumbnail?.url || 
+                                `https://placehold.co/600x400/f8f8f0/2d2d2d?text=${encodeURIComponent(work.title)}`;
+            const thumbnailAlt = work.media?.thumbnail?.alt || work.title;
+            
+            card.innerHTML = `
+                ${work.featured ? '<div class="featured-badge">注目</div>' : ''}
+                <div class="work-preview">
+                    <img 
+                        src="${thumbnailUrl}" 
+                        alt="${thumbnailAlt}"
+                        class="work-thumbnail"
+                        loading="lazy"
+                        onerror="this.src='https://placehold.co/600x400/f8f8f0/2d2d2d?text=Image+Error'"
+                    >
+                </div>
+                <div class="work-content">
+                    <h3 class="work-title">${work.title}</h3>
+                    ${work.subtitle ? `<p class="work-subtitle">${work.subtitle}</p>` : ''}
+                    <p class="work-description">${work.description}</p>
+                    <div class="work-actions">
+                        <button class="action-btn" onclick="copyPrompt('${work.id}')">
+                            Prompt Copy
+                        </button>
+                        <button class="action-btn" onclick="copyCode('${work.id}')">
+                            Code Copy
+                        </button>
+                    </div>
+                    <div class="work-tech">
+                        ${(work.tech || []).map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Enhanced click handler
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('action-btn')) {
+                    openWorkModal(work);
+                }
+            });
+            
+            return card;
+        }
+        
+        // ===== ENHANCED COPY FUNCTIONS =====
+        function copyPrompt(workId) {
+            const work = artworksData.find(w => w.id === workId);
+            if (work && work.prompt) {
+                const promptText = work.prompt.midjourney || work.prompt.description || 'プロンプトが見つかりません';
+                copyText(promptText, `"${work.title}" のプロンプトをコピーしました`);
+            }
+        }
+        
+        function copyCode(workId) {
+            const work = artworksData.find(w => w.id === workId);
+            if (work && work.code) {
+                const codeText = work.code.content || 'コードが見つかりません';
+                copyText(codeText, `"${work.title}" のコードをコピーしました`);
+            }
+        }
+        
+        function copyText(text, successMessage = 'コピーしました ✅') {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification(successMessage);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    fallbackCopyTextToClipboard(text, successMessage);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text, successMessage);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text, successMessage) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification(successMessage);
+            } catch (err) {
+                console.error('Fallback: Unable to copy', err);
+                showNotification('コピーに失敗しました ❌');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showNotification(message) {
+            const notification = createNotification('success', 'コピー完了', message, 2000);
+            document.body.appendChild(notification);
+        }
+        
+        // ===== LOADING STATE =====
+        function showLoadingState() {
+            const gallery = document.getElementById('gallery');
+            if (!gallery) return;
+            
+            gallery.innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <span>高度なギャラリーを生成中...</span>
+                </div>
+            `;
+        }
+        
+        // ===== RETRY FUNCTION =====
+        function retryLoadData() {
+            showLoadingState();
+            updateJsonStatus('loading', '再試行中...');
+            setTimeout(() => {
+                loadArtworksData();
+            }, 500);
+        }
+        
+        // ===== MODAL FUNCTIONS (BASIC) =====
+        let currentModal = null;
+        
+        function openWorkModal(work) {
+            const modal = document.getElementById('workModal');
+            const title = document.getElementById('modalTitle');
+            
+            title.textContent = work.title;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            currentModal = work;
+            console.log('🎭 モーダル表示:', work.title);
+        }
+        
+        function closeWorkModal() {
+            const modal = document.getElementById('workModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            currentModal = null;
+        }
+        
+        // ===== THREE.JS BACKGROUND (ENHANCED) =====
+        let scene, camera, renderer, particles;
+        let animationId;
+        
+        function initThreeJS() {
+            const canvas = document.getElementById('zen-canvas');
+            if (!canvas) return;
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            createZenParticles();
+            camera.position.z = 10;
+            animate();
+        }
+        
+        function createZenParticles() {
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 120;
+            const positions = new Float32Array(particleCount * 3);
+            const velocities = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+                
+                velocities[i] = (Math.random() - 0.5) * 0.01;
+                velocities[i + 1] = (Math.random() - 0.5) * 0.01;
+                velocities[i + 2] = (Math.random() - 0.5) * 0.01;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('velocity', new THREE.BufferAttribute(velocities, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0xd4af37,
+                size: 0.02,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+        
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            if (particles) {
+                const positions = particles.geometry.attributes.position.array;
+                const velocities = particles.geometry.attributes.velocity.array;
+                
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i] += velocities[i];
+                    positions[i + 1] += velocities[i + 1];
+                    positions[i + 2] += velocities[i + 2];
+                    
+                    if (Math.abs(positions[i]) > 10) velocities[i] *= -0.9;
+                    if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -0.9;
+                    if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -0.9;
+                }
+                
+                particles.geometry.attributes.position.needsUpdate = true;
+                particles.rotation.y += 0.001;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // ===== SCROLL ANIMATIONS =====
+        function setupScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.work-card, .section-title, .philosophy-text').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // ===== NAVIGATION =====
+        function setupNavigation() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = item.getAttribute('href');
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        const offsetTop = target.offsetTop - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+        
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            const closeBtn = document.getElementById('closeModal');
+            const modal = document.getElementById('workModal');
+            
+            closeBtn.addEventListener('click', closeWorkModal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeWorkModal();
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (currentModal) {
+                        closeWorkModal();
+                    } else if (document.getElementById('claudePanel').classList.contains('active')) {
+                        closeClaudeGenerator();
+                    }
+                }
+            });
+            
+            window.addEventListener('resize', () => {
+                if (camera && renderer) {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                }
+            });
+        }
+        
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🌸 ZEN Art Portfolio Step 2: 高度なJSON管理システム 初期化開始');
+            
+            // Initialize core systems
+            loadArtworksData();
+            initThreeJS();
+            setupNavigation();
+            setupEventListeners();
+            
+            console.log('✅ ZEN Art Portfolio Step 2: 初期化完了');
+        });
+        
+        // ===== CLEANUP =====
+        window.addEventListener('beforeunload', () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            if (renderer) {
+                renderer.dispose();
+            }
+        });
+        
+        // ===== DEVELOPMENT HELPERS =====
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // Development mode: Add auto-reload functionality
+            let lastModified = null;
+            setInterval(async () => {
+                try {
+                    const response = await fetch('artworks.json', { method: 'HEAD' });
+                    if (response.ok) {
+                        const modified = response.headers.get('last-modified');
+                        if (lastModified && modified && modified !== lastModified) {
+                            console.log('🔄 artworks.json updated, reloading data...');
+                            loadArtworksData();
+                        }
+                        lastModified = modified;
+                    }
+                } catch (err) {
+                    // Ignore errors in development mode
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
