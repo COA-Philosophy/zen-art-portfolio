@@ -567,31 +567,53 @@
             font-weight: 500;
         }
         
-        /* ===== WORKS GRID (強化版) ===== */
+        /* ===== WORKS GRID (完全修正版) ===== */
         .works-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: var(--space-xl);
-            margin-bottom: calc(var(--space-xl) * 3);
-            min-height: 400px; /* 最小高さを確保 */
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+            gap: 2rem !important;
+            margin-bottom: calc(var(--space-xl) * 3) !important;
+            width: 100% !important;
+            overflow: visible !important;
+            position: relative !important;
+            z-index: 1 !important;
+            /* デバッグ用 */
+            border: 2px dashed rgba(212, 175, 55, 0.2) !important;
+            padding: 1rem !important;
+            min-height: 800px !important;
         }
         
+        /* ===== WORK CARD (完全修正版) ===== */
         .work-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: var(--space-lg);
-            border: 1px solid rgba(45, 45, 45, 0.05);
-            backdrop-filter: blur(10px);
-            transition: all 0.5s var(--ease-zen);
-            opacity: 0;
-            transform: translateY(3rem);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-paper);
-            /* 強制表示用の緊急スタイル */
+            /* 基本表示設定 - 確実に表示 */
             display: block !important;
             visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 2 !important;
+            
+            /* サイズ設定 */
+            width: 100% !important;
+            min-width: 320px !important;
+            max-width: 100% !important;
+            min-height: 500px !important;
+            height: auto !important;
+            
+            /* 背景とボーダー */
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 20px !important;
+            padding: var(--space-lg) !important;
+            border: 2px solid rgba(45, 45, 45, 0.1) !important;
+            box-shadow: var(--shadow-paper) !important;
+            
+            /* レイアウト */
+            overflow: visible !important;
+            transform: translateY(0) !important;
+            transition: all 0.5s var(--ease-zen) !important;
+            cursor: pointer !important;
+            
+            /* デバッグ用 */
+            outline: 1px solid rgba(212, 175, 55, 0.3) !important;
         }
         
         .work-card::before {
@@ -610,21 +632,16 @@
             left: 100%;
         }
         
-        .work-card.visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-        
         .work-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(212, 175, 55, 0.2);
-            box-shadow: var(--shadow-elevated);
-            background: rgba(255, 255, 255, 0.98);
+            transform: translateY(-8px) !important;
+            border-color: rgba(212, 175, 55, 0.4) !important;
+            box-shadow: var(--shadow-elevated) !important;
+            background: rgba(255, 255, 255, 1) !important;
         }
         
         .work-card.featured {
-            border-color: rgba(212, 175, 55, 0.3);
-            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(212, 175, 55, 0.5) !important;
+            background: rgba(255, 255, 255, 1) !important;
         }
         
         .featured-badge {
@@ -637,31 +654,31 @@
             border-radius: 12px;
             font-size: var(--font-size-xs);
             font-weight: 500;
-            z-index: 2;
+            z-index: 10;
         }
         
-        /* ===== WORK PREVIEW (強化版) ===== */
+        /* ===== WORK PREVIEW (完全修正版) ===== */
         .work-preview {
-            width: 100%;
-            height: 240px;
-            background: var(--zen-washi);
-            border-radius: 12px;
-            margin-bottom: var(--space-lg);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(45, 45, 45, 0.08);
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100% !important;
+            height: 200px !important;
+            background: var(--zen-washi) !important;
+            border-radius: 12px !important;
+            margin-bottom: var(--space-lg) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            border: 1px solid rgba(45, 45, 45, 0.08) !important;
+            z-index: 2 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         
         .work-thumbnail {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: all 0.3s var(--ease-breathing);
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
+            transition: all 0.3s var(--ease-breathing) !important;
         }
         
         .work-thumbnail:hover {
@@ -669,66 +686,74 @@
         }
         
         .work-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--zen-washi), var(--zen-pearl));
-            color: var(--zen-stone);
-            font-size: var(--font-size-lg);
-            font-weight: 300;
-            text-align: center;
-            line-height: 1.4;
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: linear-gradient(135deg, var(--zen-washi), var(--zen-pearl)) !important;
+            color: var(--zen-stone) !important;
+            font-size: var(--font-size-lg) !important;
+            font-weight: 300 !important;
+            text-align: center !important;
+            line-height: 1.4 !important;
+            padding: 1rem !important;
         }
         
         /* ===== WORK CARD CONTENT ===== */
         .work-content {
-            position: relative;
-            z-index: 2;
+            position: relative !important;
+            z-index: 2 !important;
+            display: block !important;
+            width: 100% !important;
         }
         
         .work-title {
-            font-size: var(--font-size-xl);
-            font-weight: 500;
-            margin-bottom: var(--space-sm);
-            color: var(--zen-sumi);
-            font-family: 'Noto Sans JP', sans-serif;
+            font-size: var(--font-size-xl) !important;
+            font-weight: 500 !important;
+            margin-bottom: var(--space-sm) !important;
+            color: var(--zen-sumi) !important;
+            font-family: 'Noto Sans JP', sans-serif !important;
+            display: block !important;
         }
         
         .work-subtitle {
-            font-size: var(--font-size-sm);
-            color: var(--zen-accent);
-            margin-bottom: var(--space-md);
-            font-weight: 400;
+            font-size: var(--font-size-sm) !important;
+            color: var(--zen-accent) !important;
+            margin-bottom: var(--space-md) !important;
+            font-weight: 400 !important;
+            display: block !important;
         }
         
         .work-description {
-            color: var(--zen-stone);
-            font-size: var(--font-size-sm);
-            line-height: var(--golden-ratio);
-            margin-bottom: var(--space-lg);
+            color: var(--zen-stone) !important;
+            font-size: var(--font-size-sm) !important;
+            line-height: var(--golden-ratio) !important;
+            margin-bottom: var(--space-lg) !important;
+            display: block !important;
         }
         
         .work-actions {
-            display: flex;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-md);
+            display: flex !important;
+            gap: var(--space-sm) !important;
+            margin-bottom: var(--space-md) !important;
+            width: 100% !important;
         }
         
         .action-btn {
-            flex: 1;
-            background: var(--zen-sumi);
-            color: var(--zen-washi);
-            border: none;
-            padding: var(--space-sm) var(--space-md);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: var(--font-size-xs);
-            font-weight: 500;
-            transition: all 0.3s var(--ease-breathing);
-            position: relative;
-            overflow: hidden;
+            flex: 1 !important;
+            background: var(--zen-sumi) !important;
+            color: var(--zen-washi) !important;
+            border: none !important;
+            padding: var(--space-sm) var(--space-md) !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-size: var(--font-size-xs) !important;
+            font-weight: 500 !important;
+            transition: all 0.3s var(--ease-breathing) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            z-index: 5 !important;
         }
         
         .action-btn::before {
@@ -748,24 +773,26 @@
         }
         
         .action-btn:hover {
-            color: var(--zen-sumi);
-            transform: translateY(-1px);
+            color: var(--zen-sumi) !important;
+            transform: translateY(-1px) !important;
         }
         
         .work-tech {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-xs);
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: var(--space-xs) !important;
+            width: 100% !important;
         }
         
         .tech-tag {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--zen-accent);
-            padding: var(--space-xs) var(--space-sm);
-            border-radius: 16px;
-            font-size: var(--font-size-xs);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            font-weight: 400;
+            background: rgba(212, 175, 55, 0.1) !important;
+            color: var(--zen-accent) !important;
+            padding: var(--space-xs) var(--space-sm) !important;
+            border-radius: 16px !important;
+            font-size: var(--font-size-xs) !important;
+            border: 1px solid rgba(212, 175, 55, 0.2) !important;
+            font-weight: 400 !important;
+            display: inline-block !important;
         }
         
         /* ===== MODAL SYSTEM ===== */
@@ -937,16 +964,17 @@
             }
             
             .works-grid {
-                grid-template-columns: 1fr;
-                gap: var(--space-lg);
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
             }
             
             .work-card {
-                padding: var(--space-md);
+                padding: var(--space-md) !important;
+                min-width: 280px !important;
             }
             
             .work-preview {
-                height: 200px;
+                height: 180px !important;
             }
             
             .meta-stats {
@@ -961,11 +989,37 @@
                 padding: 8px 12px !important;
             }
         }
+        
+        /* ===== デバッグ表示用スタイル ===== */
+        .debug-info {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            background: rgba(45, 45, 45, 0.9);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 9998;
+            max-width: 300px;
+            display: none;
+        }
+        
+        .debug-info.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <!-- Three.js Background Canvas -->
     <canvas id="zen-canvas"></canvas>
+    
+    <!-- デバッグ情報パネル -->
+    <div id="debug-info" class="debug-info">
+        <div>作品数: <span id="debug-count">0</span></div>
+        <div>表示済み: <span id="debug-visible">0</span></div>
+        <div>状態: <span id="debug-status">loading</span></div>
+    </div>
     
     <!-- Navigation -->
     <div class="nav-wrapper">
@@ -1136,13 +1190,14 @@
     </div>
 
     <script>
-        // ===== ZEN ART PORTFOLIO SYSTEM (FIXED VERSION) =====
+        // ===== ZEN ART PORTFOLIO SYSTEM (ULTIMATE FIX) =====
         
         // ===== GLOBAL VARIABLES =====
         let artworksData = [];
         let metaData = {};
-        let loadingState = 'loading'; // loading, loaded, fallback, error
-        let jsonSource = 'unknown'; // json, fallback
+        let loadingState = 'loading';
+        let jsonSource = 'unknown';
+        let debugMode = false;
         
         // ===== ENHANCED FALLBACK DATA =====
         const FALLBACK_DATA = {
@@ -1308,8 +1363,7 @@
             ]
         };
         
-        // ===== ENHANCED FUNCTIONS =====
-        
+        // ===== DEBUG FUNCTIONS =====
         function safeLog(message, data = null) {
             try {
                 if (data) {
@@ -1322,13 +1376,25 @@
             }
         }
         
+        function updateDebugInfo() {
+            try {
+                if (debugMode) {
+                    document.getElementById('debug-info').classList.add('show');
+                    document.getElementById('debug-count').textContent = artworksData.length;
+                    document.getElementById('debug-visible').textContent = document.querySelectorAll('.work-card').length;
+                    document.getElementById('debug-status').textContent = loadingState;
+                }
+            } catch (e) {
+                // Ignore debug errors
+            }
+        }
+        
         function updateJsonStatus(status, text) {
             try {
                 const statusEl = document.getElementById('json-status');
                 const textEl = document.getElementById('json-status-text');
                 
                 if (statusEl && textEl) {
-                    // Force visibility with important styles
                     statusEl.className = `json-status ${status}`;
                     statusEl.style.cssText = `
                         position: fixed !important;
@@ -1343,8 +1409,6 @@
                     textEl.textContent = text;
                     
                     safeLog(`JSON状態更新: ${status} - ${text}`);
-                } else {
-                    safeLog('JSON状態要素が見つかりません');
                 }
             } catch (e) {
                 safeLog('JSON状態更新エラー:', e.message);
@@ -1361,7 +1425,6 @@
                     return ['Missing or invalid artworks array'];
                 }
                 
-                // Basic validation passed
                 return [];
             } catch (e) {
                 return ['Validation error: ' + e.message];
@@ -1415,7 +1478,7 @@
         }
         
         async function loadArtworksData() {
-            safeLog('ZEN Portfolio: 完全修正版データ読み込み開始');
+            safeLog('ZEN Portfolio: 緊急修正版データ読み込み開始');
             updateJsonStatus('loading', 'データ読み込み中...');
             
             try {
@@ -1458,8 +1521,6 @@
                 jsonSource = 'json';
                 
                 safeLog(`JSON読み込み成功: ${artworksData.length}件の作品`);
-                safeLog(`読み込み元: ${loadedFrom}`);
-                
                 updateJsonStatus('loaded', `${artworksData.length}作品 (JSON)`);
                 
             } catch (error) {
@@ -1477,7 +1538,8 @@
             // Always proceed to display
             try {
                 displayMetaInfo();
-                generateGallery();
+                await generateGallery(); // Wait for gallery generation
+                updateDebugInfo();
             } catch (displayError) {
                 safeLog('表示エラー:', displayError.message);
                 showErrorState();
@@ -1511,79 +1573,116 @@
             }
         }
         
-        function generateGallery() {
-            try {
-                const gallery = document.getElementById('gallery');
-                if (!gallery) {
-                    safeLog('ギャラリー要素が見つかりません');
-                    return;
-                }
-                
-                safeLog('ギャラリー生成開始');
-                gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>作品を生成中...</span></div>';
-                
-                if (!artworksData || artworksData.length === 0) {
-                    showErrorState();
-                    return;
-                }
-                
-                // Clear and create cards
-                gallery.innerHTML = '';
-                
-                // Sort artworks: featured first
-                const sortedArtworks = [...artworksData].sort((a, b) => {
-                    if (a.featured && !b.featured) return -1;
-                    if (!a.featured && b.featured) return 1;
-                    return new Date(b.created || 0) - new Date(a.created || 0);
-                });
-                
-                safeLog(`${sortedArtworks.length}件の作品をカード生成中`);
-                
-                // Create cards with error handling
-                sortedArtworks.forEach((work, index) => {
-                    try {
-                        const card = createSafeWorkCard(work, index);
-                        gallery.appendChild(card);
-                        safeLog(`カード生成完了: ${work.title}`);
-                    } catch (cardError) {
-                        safeLog(`カード生成エラー: ${work.title}`, cardError.message);
-                        // Continue with next card
+        async function generateGallery() {
+            return new Promise((resolve, reject) => {
+                try {
+                    const gallery = document.getElementById('gallery');
+                    if (!gallery) {
+                        safeLog('ギャラリー要素が見つかりません');
+                        reject(new Error('Gallery element not found'));
+                        return;
                     }
-                });
-                
-                // Force show cards with delay
-                setTimeout(() => {
-                    try {
-                        const cards = gallery.querySelectorAll('.work-card');
-                        cards.forEach((card, index) => {
+                    
+                    safeLog('🔥 緊急修正版ギャラリー生成開始');
+                    
+                    // Show loading first
+                    gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>作品を強制生成中...</span></div>';
+                    
+                    if (!artworksData || artworksData.length === 0) {
+                        reject(new Error('No artworks data'));
+                        return;
+                    }
+                    
+                    // Wait a bit then clear and generate
+                    setTimeout(() => {
+                        try {
+                            // Force clear gallery
+                            gallery.innerHTML = '';
+                            gallery.style.cssText = `
+                                display: grid !important;
+                                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+                                gap: 2rem !important;
+                                width: 100% !important;
+                                overflow: visible !important;
+                                position: relative !important;
+                                z-index: 1 !important;
+                                border: 2px dashed rgba(212, 175, 55, 0.2) !important;
+                                padding: 1rem !important;
+                                min-height: 800px !important;
+                            `;
+                            
+                            // Sort artworks: featured first
+                            const sortedArtworks = [...artworksData].sort((a, b) => {
+                                if (a.featured && !b.featured) return -1;
+                                if (!a.featured && b.featured) return 1;
+                                return new Date(b.created || 0) - new Date(a.created || 0);
+                            });
+                            
+                            safeLog(`${sortedArtworks.length}件の作品を強制カード生成中`);
+                            
+                            // Create cards immediately
+                            sortedArtworks.forEach((work, index) => {
+                                try {
+                                    const card = createUltimateWorkCard(work, index);
+                                    gallery.appendChild(card);
+                                    safeLog(`✅ カード強制生成完了: ${work.title}`);
+                                } catch (cardError) {
+                                    safeLog(`❌ カード生成エラー: ${work.title}`, cardError.message);
+                                    // Create error card
+                                    const errorCard = createErrorCard(work, index);
+                                    gallery.appendChild(errorCard);
+                                }
+                            });
+                            
+                            // Force immediate visibility
                             setTimeout(() => {
-                                card.classList.add('visible');
-                            }, index * 100);
-                        });
-                        safeLog(`${cards.length}件のカードを表示中`);
-                    } catch (showError) {
-                        safeLog('カード表示エラー:', showError.message);
-                    }
-                }, 100);
-                
-                // Setup scroll animations
-                setTimeout(() => {
-                    setupScrollAnimations();
-                }, 500);
-                
-                safeLog('ギャラリー生成完了');
-                
-            } catch (error) {
-                safeLog('ギャラリー生成エラー:', error.message);
-                showErrorState();
-            }
+                                forceShowAllCards();
+                                setupScrollAnimations();
+                                updateDebugInfo();
+                                safeLog(`🎉 緊急修正版ギャラリー生成完了: ${gallery.children.length}件表示中`);
+                                resolve();
+                            }, 100);
+                            
+                        } catch (genError) {
+                            safeLog('ギャラリー生成エラー:', genError.message);
+                            reject(genError);
+                        }
+                    }, 300);
+                    
+                } catch (error) {
+                    safeLog('ギャラリー生成エラー:', error.message);
+                    reject(error);
+                }
+            });
         }
         
-        function createSafeWorkCard(work, index) {
+        function createUltimateWorkCard(work, index) {
             try {
                 const card = document.createElement('div');
+                
+                // Force all styles with !important
                 card.className = `work-card ${work.featured ? 'featured' : ''}`;
-                card.style.transitionDelay = `${index * 0.1}s`;
+                card.style.cssText = `
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    position: relative !important;
+                    z-index: 2 !important;
+                    width: 100% !important;
+                    min-width: 320px !important;
+                    min-height: 500px !important;
+                    background: rgba(255, 255, 255, 0.95) !important;
+                    border-radius: 20px !important;
+                    padding: 1.5rem !important;
+                    border: 2px solid rgba(45, 45, 45, 0.1) !important;
+                    box-shadow: 0 4px 16px rgba(45, 45, 45, 0.08) !important;
+                    cursor: pointer !important;
+                    transition: all 0.5s ease !important;
+                    overflow: visible !important;
+                    transform: translateY(0) !important;
+                    margin-bottom: 1rem !important;
+                    outline: 1px solid rgba(212, 175, 55, 0.3) !important;
+                `;
                 
                 // Safe thumbnail URL
                 const thumbnailUrl = (work.media && work.media.thumbnail && work.media.thumbnail.url) 
@@ -1594,31 +1693,84 @@
                     ? work.media.thumbnail.alt 
                     : work.title;
                 
+                // Create card content with forced styles
                 card.innerHTML = `
-                    ${work.featured ? '<div class="featured-badge">注目</div>' : ''}
-                    <div class="work-preview">
+                    ${work.featured ? '<div class="featured-badge" style="position: absolute !important; top: 1rem !important; right: 1rem !important; background: #d4af37 !important; color: #2d2d2d !important; padding: 0.25rem 0.5rem !important; border-radius: 12px !important; font-size: 0.75rem !important; font-weight: 500 !important; z-index: 10 !important;">注目</div>' : ''}
+                    
+                    <div class="work-preview" style="
+                        width: 100% !important;
+                        height: 200px !important;
+                        background: #f8f8f0 !important;
+                        border-radius: 12px !important;
+                        margin-bottom: 1.5rem !important;
+                        position: relative !important;
+                        overflow: hidden !important;
+                        border: 1px solid rgba(45, 45, 45, 0.08) !important;
+                        z-index: 2 !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                    ">
                         <img 
                             src="${thumbnailUrl}" 
                             alt="${thumbnailAlt}"
-                            class="work-thumbnail"
+                            style="width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important;"
                             loading="lazy"
-                            onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\\"work-placeholder\\">${work.title}</div>'"
+                            onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\"width: 100% !important; height: 100% !important; display: flex !important; align-items: center !important; justify-content: center !important; background: linear-gradient(135deg, #f8f8f0, #e8e8e8) !important; color: #6a6a6a !important; font-size: 1.125rem !important; font-weight: 300 !important; text-align: center !important; line-height: 1.4 !important; padding: 1rem !important;\\">${work.title}</div>'"
                         >
                     </div>
-                    <div class="work-content">
-                        <h3 class="work-title">${work.title}</h3>
-                        ${work.subtitle ? `<p class="work-subtitle">${work.subtitle}</p>` : ''}
-                        <p class="work-description">${work.description}</p>
-                        <div class="work-actions">
-                            <button class="action-btn" onclick="copyPrompt('${work.id}')">
+                    
+                    <div class="work-content" style="position: relative !important; z-index: 2 !important; display: block !important; width: 100% !important;">
+                        <h3 class="work-title" style="font-size: 1.25rem !important; font-weight: 500 !important; margin-bottom: 0.5rem !important; color: #2d2d2d !important; display: block !important;">${work.title}</h3>
+                        
+                        ${work.subtitle ? `<p class="work-subtitle" style="font-size: 0.875rem !important; color: #d4af37 !important; margin-bottom: 1rem !important; font-weight: 400 !important; display: block !important;">${work.subtitle}</p>` : ''}
+                        
+                        <p class="work-description" style="color: #6a6a6a !important; font-size: 0.875rem !important; line-height: 1.618 !important; margin-bottom: 1.5rem !important; display: block !important;">${work.description}</p>
+                        
+                        <div class="work-actions" style="display: flex !important; gap: 0.5rem !important; margin-bottom: 1rem !important; width: 100% !important;">
+                            <button class="action-btn" onclick="copyPrompt('${work.id}')" style="
+                                flex: 1 !important;
+                                background: #2d2d2d !important;
+                                color: #f8f8f0 !important;
+                                border: none !important;
+                                padding: 0.5rem 1rem !important;
+                                border-radius: 8px !important;
+                                cursor: pointer !important;
+                                font-size: 0.75rem !important;
+                                font-weight: 500 !important;
+                                transition: all 0.3s ease !important;
+                                z-index: 5 !important;
+                            ">
                                 Prompt Copy
                             </button>
-                            <button class="action-btn" onclick="copyCode('${work.id}')">
+                            <button class="action-btn" onclick="copyCode('${work.id}')" style="
+                                flex: 1 !important;
+                                background: #2d2d2d !important;
+                                color: #f8f8f0 !important;
+                                border: none !important;
+                                padding: 0.5rem 1rem !important;
+                                border-radius: 8px !important;
+                                cursor: pointer !important;
+                                font-size: 0.75rem !important;
+                                font-weight: 500 !important;
+                                transition: all 0.3s ease !important;
+                                z-index: 5 !important;
+                            ">
                                 Code Copy
                             </button>
                         </div>
-                        <div class="work-tech">
-                            ${(work.tech || []).map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                        
+                        <div class="work-tech" style="display: flex !important; flex-wrap: wrap !important; gap: 0.25rem !important; width: 100% !important;">
+                            ${(work.tech || []).map(tech => `<span style="
+                                background: rgba(212, 175, 55, 0.1) !important;
+                                color: #d4af37 !important;
+                                padding: 0.25rem 0.5rem !important;
+                                border-radius: 16px !important;
+                                font-size: 0.75rem !important;
+                                border: 1px solid rgba(212, 175, 55, 0.2) !important;
+                                font-weight: 400 !important;
+                                display: inline-block !important;
+                            ">${tech}</span>`).join('')}
                         </div>
                     </div>
                 `;
@@ -1626,7 +1778,7 @@
                 // Safe click handler
                 card.addEventListener('click', (e) => {
                     try {
-                        if (!e.target.classList.contains('action-btn')) {
+                        if (!e.target.classList.contains('action-btn') && e.target.tagName !== 'BUTTON') {
                             openWorkModal(work);
                         }
                     } catch (clickError) {
@@ -1638,19 +1790,57 @@
                 
             } catch (error) {
                 safeLog('カード作成エラー:', error.message);
-                // Return a simple error card
-                const errorCard = document.createElement('div');
-                errorCard.className = 'work-card';
-                errorCard.innerHTML = `
-                    <div class="work-preview">
-                        <div class="work-placeholder">Error Loading: ${work.title || 'Unknown'}</div>
-                    </div>
-                    <div class="work-content">
-                        <h3 class="work-title">${work.title || 'Error'}</h3>
-                        <p class="work-description">カードの読み込みでエラーが発生しました。</p>
-                    </div>
-                `;
-                return errorCard;
+                return createErrorCard(work, index);
+            }
+        }
+        
+        function createErrorCard(work, index) {
+            const errorCard = document.createElement('div');
+            errorCard.className = 'work-card';
+            errorCard.style.cssText = `
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                width: 100% !important;
+                min-height: 300px !important;
+                background: rgba(255, 200, 200, 0.9) !important;
+                border: 2px solid rgba(255, 100, 100, 0.3) !important;
+                border-radius: 20px !important;
+                padding: 1.5rem !important;
+                text-align: center !important;
+            `;
+            
+            errorCard.innerHTML = `
+                <div style="color: #ff6464; font-size: 2rem; margin-bottom: 1rem;">⚠️</div>
+                <h3 style="color: #2d2d2d; margin-bottom: 0.5rem;">${work.title || 'Error'}</h3>
+                <p style="color: #6a6a6a; font-size: 0.875rem;">カードの読み込みでエラーが発生しました。</p>
+            `;
+            return errorCard;
+        }
+        
+        function forceShowAllCards() {
+            try {
+                const cards = document.querySelectorAll('.work-card');
+                safeLog(`強制表示開始: ${cards.length}件のカード`);
+                
+                cards.forEach((card, index) => {
+                    // Force immediate visibility
+                    card.style.cssText += `
+                        display: block !important;
+                        visibility: visible !important;
+                        opacity: 1 !important;
+                        transform: translateY(0) !important;
+                    `;
+                    
+                    // Add visible class
+                    card.classList.add('visible');
+                    
+                    safeLog(`✅ カード ${index + 1} 強制表示完了`);
+                });
+                
+                safeLog(`🎉 全${cards.length}件のカード強制表示完了！`);
+            } catch (e) {
+                safeLog('カード強制表示エラー:', e.message);
             }
         }
         
@@ -1659,13 +1849,19 @@
                 const gallery = document.getElementById('gallery');
                 if (gallery) {
                     gallery.innerHTML = `
-                        <div class="error-state">
-                            <div class="error-icon">⚠️</div>
-                            <div class="error-message">作品の読み込みでエラーが発生しました</div>
-                            <div class="error-details">
+                        <div class="error-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; color: #6a6a6a; text-align: center; padding: 2rem;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;">⚠️</div>
+                            <div style="font-size: 1.125rem; margin-bottom: 0.5rem;">作品の読み込みでエラーが発生しました</div>
+                            <div style="font-size: 0.875rem; color: #8a8a8a; max-width: 500px; margin-bottom: 1rem;">
                                 データの形式に問題があるか、ネットワークエラーが発生している可能性があります。
                             </div>
-                            <button class="retry-button" onclick="retryLoadData()">再試行</button>
+                            <button onclick="retryLoadData()" style="
+                                margin-top: 1rem; padding: 0.5rem 1.5rem; background: #2d2d2d; color: #f8f8f0;
+                                border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='#d4af37'; this.style.color='#2d2d2d'" onmouseout="this.style.background='#2d2d2d'; this.style.color='#f8f8f0'">
+                                再試行
+                            </button>
                         </div>
                     `;
                 }
@@ -1814,7 +2010,8 @@
                     `🎨 作品数: ${artworksData.length}件`,
                     `🔄 読み込み状態: ${loadingState}`,
                     `📋 バージョン: ${metaData.version || 'N/A'}`,
-                    `👤 作成者: ${metaData.author || 'N/A'}`
+                    `👤 作成者: ${metaData.author || 'N/A'}`,
+                    `📊 表示カード数: ${document.querySelectorAll('.work-card').length}件`
                 ];
                 
                 showSimpleModal('📊 システム状態情報', details.join('<br>'));
@@ -1860,6 +2057,9 @@
                         <button onclick="retryLoadData(); closeSimpleModal();" style="
                             background: #2d2d2d; color: #f8f8f0; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; margin-right: 0.5rem;
                         ">🔄 再読み込み</button>
+                        <button onclick="debugMode = !debugMode; updateDebugInfo(); closeSimpleModal();" style="
+                            background: #d4af37; color: #2d2d2d; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;
+                        ">🔍 デバッグ切替</button>
                     </div>
                 `;
                 
@@ -1907,9 +2107,9 @@
             try {
                 const gallery = document.getElementById('gallery');
                 if (gallery) {
-                    gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>再試行中...</span></div>';
+                    gallery.innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><span>緊急再試行中...</span></div>';
                 }
-                updateJsonStatus('loading', '再試行中...');
+                updateJsonStatus('loading', '緊急再試行中...');
                 setTimeout(() => {
                     loadArtworksData();
                 }, 500);
@@ -1982,7 +2182,7 @@
         function createZenParticles() {
             try {
                 const geometry = new THREE.BufferGeometry();
-                const particleCount = 80; // Reduced for performance
+                const particleCount = 60; // Reduced for performance
                 const positions = new Float32Array(particleCount * 3);
                 const velocities = new Float32Array(particleCount * 3);
                 
@@ -1991,9 +2191,9 @@
                     positions[i + 1] = (Math.random() - 0.5) * 20;
                     positions[i + 2] = (Math.random() - 0.5) * 20;
                     
-                    velocities[i] = (Math.random() - 0.5) * 0.005;
-                    velocities[i + 1] = (Math.random() - 0.5) * 0.005;
-                    velocities[i + 2] = (Math.random() - 0.5) * 0.005;
+                    velocities[i] = (Math.random() - 0.5) * 0.003;
+                    velocities[i + 1] = (Math.random() - 0.5) * 0.003;
+                    velocities[i + 2] = (Math.random() - 0.5) * 0.003;
                 }
                 
                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -2001,9 +2201,9 @@
                 
                 const material = new THREE.PointsMaterial({
                     color: 0xd4af37,
-                    size: 0.01,
+                    size: 0.008,
                     transparent: true,
-                    opacity: 0.4,
+                    opacity: 0.3,
                     blending: THREE.AdditiveBlending
                 });
                 
@@ -2027,13 +2227,13 @@
                         positions[i + 1] += velocities[i + 1];
                         positions[i + 2] += velocities[i + 2];
                         
-                        if (Math.abs(positions[i]) > 10) velocities[i] *= -0.8;
-                        if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -0.8;
-                        if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -0.8;
+                        if (Math.abs(positions[i]) > 10) velocities[i] *= -0.7;
+                        if (Math.abs(positions[i + 1]) > 10) velocities[i + 1] *= -0.7;
+                        if (Math.abs(positions[i + 2]) > 10) velocities[i + 2] *= -0.7;
                     }
                     
                     particles.geometry.attributes.position.needsUpdate = true;
-                    particles.rotation.y += 0.0005;
+                    particles.rotation.y += 0.0003;
                 }
                 
                 if (renderer && scene && camera) {
@@ -2051,7 +2251,7 @@
         function setupScrollAnimations() {
             try {
                 const observerOptions = {
-                    threshold: 0.1,
+                    threshold: 0.05,
                     rootMargin: '0px 0px -50px 0px'
                 };
                 
@@ -2063,7 +2263,7 @@
                     });
                 }, observerOptions);
                 
-                document.querySelectorAll('.work-card, .section-title, .philosophy-text').forEach(el => {
+                document.querySelectorAll('.section-title, .philosophy-text').forEach(el => {
                     observer.observe(el);
                 });
                 
@@ -2158,7 +2358,7 @@
         
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
-            safeLog('ZEN Art Portfolio 完全修正版: 初期化開始');
+            safeLog('🔥 ZEN Art Portfolio 緊急修正版: 初期化開始');
             
             try {
                 // Force show JSON status immediately
@@ -2177,7 +2377,7 @@
                         `;
                         safeLog('JSON状態要素を強制表示');
                     }
-                }, 500);
+                }, 200);
                 
                 // Initialize systems
                 loadArtworksData();
@@ -2185,11 +2385,10 @@
                 setupNavigation();
                 setupEventListeners();
                 
-                safeLog('初期化完了');
+                safeLog('🎉 緊急修正版初期化完了');
                 
             } catch (initError) {
                 safeLog('初期化エラー:', initError.message);
-                // Try to show error state
                 setTimeout(() => {
                     showErrorState();
                 }, 1000);
@@ -2218,7 +2417,9 @@
                 safeLog('メタデータ:', metaData);
                 safeLog('読み込み状態:', loadingState);
                 safeLog('JSONソース:', jsonSource);
-            }, 2000);
+                debugMode = true;
+                updateDebugInfo();
+            }, 3000);
         }
     </script>
 </body>
