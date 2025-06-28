@@ -455,6 +455,147 @@
                 margin-bottom: var(--space-lg);
             }
         }
+        
+        /* ===== モーダル用スタイル ===== */
+        .work-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .work-modal.show {
+            opacity: 1;
+        }
+        
+        .modal-content {
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            background: white;
+            padding: var(--space-xl);
+            border-radius: 16px;
+            position: relative;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .work-modal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            background: rgba(45, 45, 45, 0.1);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--zen-stone);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: var(--zen-gold);
+            color: var(--zen-sumi);
+            transform: rotate(90deg);
+        }
+        
+        .modal-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 500;
+            margin-bottom: var(--space-md);
+            color: var(--zen-sumi);
+            font-family: 'Noto Sans JP', sans-serif;
+            padding-right: 60px;
+        }
+        
+        .modal-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--zen-gold);
+            margin-bottom: var(--space-lg);
+            font-weight: 400;
+        }
+        
+        .modal-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: var(--space-lg);
+            border: 1px solid rgba(45, 45, 45, 0.1);
+        }
+        
+        .modal-description {
+            color: var(--zen-stone);
+            font-size: var(--font-size-base);
+            line-height: 1.7;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .modal-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .modal-section h4 {
+            font-size: var(--font-size-lg);
+            color: var(--zen-sumi);
+            margin-bottom: var(--space-sm);
+            font-weight: 500;
+        }
+        
+        .modal-code {
+            background: #f8f8f8;
+            padding: var(--space-md);
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--zen-sumi);
+            border: 1px solid rgba(45, 45, 45, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .modal-prompt {
+            background: rgba(212, 175, 55, 0.05);
+            padding: var(--space-md);
+            border-radius: 8px;
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            color: var(--zen-stone);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .modal-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: var(--space-sm);
+        }
+        
+        .modal-tech .tech-tag {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--zen-gold);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -950,6 +1091,15 @@
                 </div>
             `;
             
+            // ===== カードクリックイベント追加 =====
+            card.addEventListener('click', (e) => {
+                // コピーボタンがクリックされた場合は無視
+                if (e.target.closest('.action-btn')) return;
+                
+                // モーダルを開く
+                openWorkModal(work);
+            });
+            
             // 画像がない場合は即座にカウント
             if (!thumbnailUrl) {
                 imageLoadCount++;
@@ -986,6 +1136,102 @@
                     <button class="retry-button" onclick="retryLoad()">再試行</button>
                 </div>
             `;
+        }
+        
+        // ===== モーダル機能 =====
+        function openWorkModal(work) {
+            // 既存のモーダルがあれば削除
+            document.querySelectorAll('.work-modal').forEach(m => m.remove());
+            
+            const modal = document.createElement('div');
+            modal.className = 'work-modal';
+            
+            const thumbnailUrl = work.media?.thumbnail?.url || null;
+            const promptText = work.prompt?.midjourney || work.prompt?.description || 'プロンプトが見つかりません';
+            const codeText = work.code?.content || 'コードが見つかりません';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeWorkModal(this)">×</button>
+                    
+                    <h2 class="modal-title">${work.title}</h2>
+                    ${work.subtitle ? `<div class="modal-subtitle">${work.subtitle}</div>` : ''}
+                    
+                    ${thumbnailUrl ? 
+                        `<img src="${thumbnailUrl}" alt="${work.title}" class="modal-image" onerror="this.style.display='none'">` : 
+                        ''
+                    }
+                    
+                    <div class="modal-description">${work.description}</div>
+                    
+                    ${work.tech && work.tech.length > 0 ? `
+                        <div class="modal-section">
+                            <h4>使用技術</h4>
+                            <div class="modal-tech">
+                                ${work.tech.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="modal-section">
+                        <h4>Midjourney プロンプト</h4>
+                        <div class="modal-prompt">${promptText}</div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h4>コード例</h4>
+                        <div class="modal-code">${codeText}</div>
+                    </div>
+                </div>
+            `;
+            
+            // 背景クリックで閉じる
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeWorkModal();
+                }
+            });
+            
+            // Escキーで閉じる
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeWorkModal();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
+            
+            document.body.appendChild(modal);
+            
+            // アニメーション用に少し遅らせて表示
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            // スクロールを無効化
+            document.body.style.overflow = 'hidden';
+            
+            log(`モーダル表示: ${work.title}`);
+        }
+        
+        function closeWorkModal(buttonElement = null) {
+            const modal = buttonElement ? 
+                buttonElement.closest('.work-modal') : 
+                document.querySelector('.work-modal');
+                
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    if (modal.parentNode) {
+                        modal.parentNode.removeChild(modal);
+                    }
+                }, 300);
+                
+                // スクロールを有効化
+                document.body.style.overflow = 'auto';
+                
+                log('モーダル閉じる');
+            }
         }
         
         // ===== コピー機能 =====
@@ -1073,6 +1319,8 @@
         window.retryLoad = retryLoad;
         window.showDetailedStatus = showDetailedStatus;
         window.openClaudeGenerator = openClaudeGenerator;
+        window.openWorkModal = openWorkModal;
+        window.closeWorkModal = closeWorkModal;
         
         // ===== 初期化 =====
         document.addEventListener('DOMContentLoaded', () => {
